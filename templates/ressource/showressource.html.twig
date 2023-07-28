@@ -10,20 +10,18 @@
 <table class="table">
   <thead>
     <tr>
-     
-      <th scope="col">Section</th>
-      <th scope="col">Description</th>
+      <th scope="col">Type</th>
+      <th scope="col">Titre</th>
       <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
-    {% for section in sections %}
+    {% for ressource in ressources %}
     <tr>
-      
-      <td>{{section.titre}}</td>
-      <td>{{section.description}}</td>
+      <td>{{ressource.type}}</td>
+      <td>{{ressource.titre}}</td>
       <td>
-        <a href="{{path('showressource')}}" class="btn btn-light"><i class="fa fa-eye"></i></a>
+        <a href="{{path('download_doc',{'id': ressource.id})}}" class="btn btn-light"><i class="fa-solid fa-download"></i></a>
       </td>
       
     {% endfor %}

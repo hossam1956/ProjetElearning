@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\RessourceType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\RessourceRepository;
 
 class RessourceController extends AbstractController
 {
@@ -52,4 +53,35 @@ class RessourceController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+     /**
+     * @Route("/show/{idsection}/ressource", name="showressource")
+     */
+
+     public function showressource(RessourceRepository $ressourceRepository,$idsection)
+    {    $ressource = $ressourceRepository->findBy(['idsection' => $idsection]);
+        
+        return $this->render('ressource/showressource.html.twig', [
+            'ressources' => $ressource
+        ]);
+    }
+
+    /**
+     * @Route("/download/{id}/doc", name="download_doc")
+     */
+    public function downloaddoc(RessourceRepository $ressourceRepository,$id)
+    {   
+        
+        $ressource = $ressourceRepository->find($id);
+        $ressourceTitre=$ressource->getTitre();
+        $ressourceType=$ressource->getType();
+        $ressourceLien=$ressource->getLien();
+        $filePath = $this->getParameter("photo_directory")."/$ressourceLien";
+        $response = new Response(file_get_contents($filePath));
+        $response->headers->set('Content-Type',$ressourceType);
+        $response->headers->set('Content-Disposition', "attachment; filename=$ressourceTitre");
+        return $response;
+        
+    }
 }
+
+

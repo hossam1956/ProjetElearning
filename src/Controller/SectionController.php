@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\SectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
-
+use App\Repository\SectionRepository;
 class SectionController extends AbstractController
 {
     /**
@@ -35,11 +35,11 @@ class SectionController extends AbstractController
      * @Route("/show/section", name="showsection")
      */
 
-     public function showsection()
-    {
- 
+     public function showsection(SectionRepository $sectionRepository)
+    {    $section = $sectionRepository->findAll();
+        
         return $this->render('section/showsection.html.twig', [
-            'form' => $form->createView()
+            'sections' => $section
         ]);
     }
 }
