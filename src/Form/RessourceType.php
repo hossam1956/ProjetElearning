@@ -39,7 +39,7 @@ class RessourceType extends AbstractType
         ->add('titre',TextType::class,["label"=>"titre"])
         ->add('lien', FileType::class, [
             "label" => "fichier",
-            'required' => false,
+            'required' => true,
             
             ])
         ->add('type',ChoiceType::class,[

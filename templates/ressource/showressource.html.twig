@@ -7,6 +7,7 @@
 {{parent()}}
 {% endblock %}
 {% block body %}
+<a href="{{path('addressource')}}" class="btn btn-light mt-4 ms-4 " style="width: 200px;display: inline;"><i class="fa fa-plus" > Ajouter une ressource</i></a>
 <table class="table">
   <thead>
     <tr>
@@ -15,6 +16,7 @@
       <th scope="col">Actions</th>
     </tr>
   </thead>
+  <h1>Ressources</h1>
   <tbody>
     {% for ressource in ressources %}
     <tr>
@@ -22,7 +24,9 @@
       <td>{{ressource.titre}}</td>
       <td>
         <a href="{{path('download_doc',{'id': ressource.id})}}" class="btn btn-light"><i class="fa-solid fa-download"></i></a>
-      </td>
+        <a href="{{path('editressource',{'idsection': ressource.idsection, 'id': ressource.id})}}" class="btn btn-warning " ><i class="fa-solid fa-pen-to-square"></i></a>
+        <a href="{{path('deleteressource',{'idsection': ressource.idsection, 'id': ressource.id})}}" class="btn btn-danger " ><i class="fa-solid fa-trash"></i></a>
+    </td>
       
     {% endfor %}
     </tr>
@@ -30,5 +34,5 @@
 
   </tbody>
 </table>
-
+<h1>Exercices</h1>
 {% endblock %}

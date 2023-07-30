@@ -41,7 +41,12 @@ class Ressource
     {
         return $this->id;
     }
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
 
+        return $this;
+    }
     public function getTitre(): ?string
     {
         return $this->titre;
@@ -59,9 +64,12 @@ class Ressource
         return $this->lien;
     }
 
-    public function setLien(string $lien): self
+    public function setLien($lien): self
     {
-        $this->lien = $lien;
+        // Only set the lien property if the argument is not null and is a string
+        if ($lien !== null && is_string($lien)) {
+            $this->lien = $lien;
+        }
 
         return $this;
     }

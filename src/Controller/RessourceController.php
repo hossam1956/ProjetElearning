@@ -25,7 +25,7 @@ class RessourceController extends AbstractController
     }
 
     /**
-     * @Route("/add/ressource", name="add_ressource")
+     * @Route("/add/ressource", name="addressource")
      */
     public function addressource(Request $request)
 
@@ -53,6 +53,61 @@ class RessourceController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
+
+
+
+    /**
+     * @Route("/edit/{idsection}/ressource/{id}", name="editressource")
+     */
+    public function editressource(Ressource $ressource,Request $request)
+    {   
+        $ressource1 = new Ressource();
+        $idsection = $ressource->getIdsection();
+        $ressource1->setId($ressource->getId());
+        $ressource1->setTitre($ressource->getTitre());
+        $ressource1->setType($ressource->getType());
+        $ressource1->setIdsection($ressource->getIdsection());
+        $form = $this->createForm(RessourceType::class, $ressource1);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ressource1=$form->getData();
+            $lien = $form['lien']->getData();
+            $lien_name=$lien->getClientOriginalName();
+            $lien->move($this->getParameter("photo_directory"),$lien_name);
+            $ressource1->setLien($lien_name);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($ressource);
+            $entityManager->flush();
+            $entityManager->persist($ressource1);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('showressource',['idsection' => $idsection]); 
+        }
+        return $this->render('ressource/edit.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    
+
+    /**
+     * @Route("/delete/{idsection}/ressource/{id}", name="deleteressource")
+     */
+    public function deleteressource(Ressource $ressource,Request $request,RessourceRepository $ressourcerepository,$id,$idsection)
+    {
+            $ressource = $ressourcerepository->findOneBy(['id' => $id]);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($ressource);
+            $entityManager->flush();
+            return $this->redirectToRoute('showressource',['idsection' => $idsection]); 
+    }
+
+
+
+
+
+
      /**
      * @Route("/show/{idsection}/ressource", name="showressource")
      */

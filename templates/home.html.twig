@@ -1,1 +1,27 @@
-home
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ressource!{% endblock %}
+{% block stylesheets %} {{parent()}} {% endblock %}
+{% block javascripts %} {{parent()}} {% endblock %}
+{% block navabar %}
+{{parent()}}
+{% endblock %}
+{% block sidebar %}
+<div class="container d-flex mt-5">
+    <div class="asidBar col-3">
+        <input type="text" placeholder="Search" class="form-control" id="myInput" onkeyup="">
+        <h2>Category</h2>
+        <ul type="none" >
+            <li><button class="btn" onclick=""  value="ALL">ALL</button></li>
+            <li><button class="btn" onclick=""  value="">catg</button></li>
+        </ul>
+    </div>
+    <!--<div class="courses col-9 d-flex flex-wrap justify-content-around" >
+        <p id="pan" style="display: none; font-size: 40px;">Sorry no result found</p>
+    </div>-->
+</div>
+{% endblock %}
+
+{% block body %}
+{% endblock %}
+
