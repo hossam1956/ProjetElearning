@@ -43,9 +43,10 @@
                                         <a href="{{ path('app_exercice.show', {id : exercice.id}) }}" class="btn btn-primary">
                                             Show exercise <i class="fa-regular fa-eye"></i>
                                         </a>
-                                        {# <a href="{{ path('app_exercice.practice', {id : exercice.id}) }}" class="btn btn-info">
-                                            Take exercise <i class="fa-solid fa-book"></i>
-                                        </a> #}
+                                        <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
+                                            <i class="fa-solid fa-book"></i>
+                                            Take exercise 
+                                        </a>
                                         {# {% if is_granted('ROLE_USER') %}
                                             {% if task.user.id == app.user.id %}
                                                 <a href="{{ path('task_edit', {id : task.id}) }}" class="btn btn-warning">

@@ -159,32 +159,32 @@ class QuestionController extends AbstractController
         );
     }
 
-    #[Route('/practice/{question_id}', name: 'app_exercice.practice')]
-    public function PracticeExercice(Request $request, $question_id)
-    {
-        $form = $this->createForm(PracticeType::class, null, ['question_id' => $question_id]);
+    // #[Route('/practice/{question_id}', name: 'app_exercice.practice')]
+    // public function PracticeExercice(Request $request, $question_id)
+    // {
+    //     $form = $this->createForm(PracticeType::class, null, ['question_id' => $question_id]);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$exercice` variable has also been updated
-            $exercice = $form->getData();
-            // $user = $this->getUser();
-            // $exercice->setUser($user);
+    //     $form->handleRequest($request);
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         // $form->getData() holds the submitted values
+    //         // but, the original `$exercice` variable has also been updated
+    //         $exercice = $form->getData();
+    //         // $user = $this->getUser();
+    //         // $exercice->setUser($user);
 
-            // ... perform some action, such as saving the task to the database
-            // for example, if Task is a Doctrine entity, save it!
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($exercice);
-            $entityManager->flush();
-            $this->flashMessage->add("success", "Exercise added, now let's add some questions!");
+    //         // ... perform some action, such as saving the task to the database
+    //         // for example, if Task is a Doctrine entity, save it!
+    //         $entityManager = $this->getDoctrine()->getManager();
+    //         $entityManager->persist($exercice);
+    //         $entityManager->flush();
+    //         $this->flashMessage->add("success", "Exercise added, now let's add some questions!");
 
-            return $this->redirectToRoute('app_exercice');
-        }
+    //         return $this->redirectToRoute('app_exercice');
+    //     }
 
-        return $this->render('exercice/practice.html.twig', [
-            'form' => $form->createView(),
+    //     return $this->render('exercice/practice.html.twig', [
+    //         'form' => $form->createView(),
 
-        ]);
-    }
+    //     ]);
+    // }
 }

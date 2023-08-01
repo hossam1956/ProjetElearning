@@ -12,6 +12,12 @@
                     </h3>
                 </div>
                 <div class="card-body">
+                    {% if question.getChoixReponses() is empty %}
+                        {# {{exercice.questions}} #}
+                        <div class="alert alert-warning" role="alert">
+                            You need to add some response choices !
+                        </div>
+                    {% endif %}
                     {# <div class="card-text">
                         {{ exercice.body }}
                     </div>

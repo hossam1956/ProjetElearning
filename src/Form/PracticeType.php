@@ -2,64 +2,80 @@
 
 namespace App\Form;
 
-use App\Repository\QuestionRepository;
+use App\Repository\ExerciceRepository;
+// use App\Repository\QuestionRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PracticeType extends AbstractType
 {
 
-    //     // private $question;
-    //     // private $choix;
-    //     // private $question_id;
-    //     private $questionRepository;
+    // private $question;
+    // private $choix;
+    // private $question_id;
+    private $exerciceRepository;
 
-    //     public function __construct(QuestionRepository $questionRepository)
-    //     {
-    //         $this->questionRepository = $questionRepository;
-    //     }
+    public function __construct(ExerciceRepository $exerciceRepository)
+    {
+        $this->exerciceRepository = $exerciceRepository;
+    }
 
-    //     public function buildForm(FormBuilderInterface $builder, array $options)
-    //     {
-    //         $question_id = $options['question_id'];
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
 
-    //         $question = $this->questionRepository->find($question_id);
-    //         // $question_id = $question_id;
-    //         // $choix = [];
-    //         // $choices = $question->getChoixReponses();
-    //         // foreach ($choices as $choice) {
-    //         //     array_push($choix, $choice);
-    //         // }
+        $exercice_id = $options['exercice_id'];
+        $exercice = $this->exerciceRepository->find($exercice_id);
+        $questions = $exercice->getQuestions();
 
-    //         $choices = $question->getChoixReponses();
-    //         $choix = [];
-    //         $i = 0;
-    //         foreach ($choices as $choice) {
-    //             $choix[$i] = $choice->getChoix();
-    //         }
-    //         dump($choix);
+        $j = 1;
+        foreach ($questions as $question) {
+            $choix = [[]];
+            $choices = $question->getChoixReponses();
+            $i = 1;
+            foreach ($choices as $choice) {
+                $choix[$j][$choice->getChoix()] = "$i";
+                $i++;
+            }
+            $builder
+                // ... other form fields ...
+                ->add('choix' . $j, ChoiceType::class, [
+                    'choices' => $choix,
+                    'expanded' => true, // This will render the radio buttons instead of a select dropdown
+                    'multiple' => false, // Set this to false to render radio buttons
+                    'label' => $question->getQuestion(), // The label for the field
+                    // Other options if needed
+                ]);
+            $j++;
+        }
 
-    //         $builder
-    //             // ... other form fields ...
-    //             ->add('choix', ChoiceType::class, [
-    //                 'choices' => $choix,
-    //                 'expanded' => true, // This will render the radio buttons instead of a select dropdown
-    //                 'multiple' => false, // Set this to false to render radio buttons
-    //                 'label' => 'Choose an option:', // The label for the field
-    //                 // Other options if needed
-    //             ]);
-    //     }
-
+        $builder->add('valider', SubmitType::class);
 
 
-    //     public function configureOptions(OptionsResolver $resolver)
-    //     {
-    //         $resolver->setRequired('question_id'); // Define 'question_id' as a required option
-    //         // $resolver->setAllowedTypes('question_id', 'int'); // Ensure 'question_id' is of type integer
-    //     }
+        // dump($choix);
 
+        // $builder
+        //     // ... other form fields ...
+        //     ->add('choix', ChoiceType::class, [
+        //         'choices' => $choix,
+        //         'expanded' => true, // This will render the radio buttons instead of a select dropdown
+        //         'multiple' => false, // Set this to false to render radio buttons
+        //         'label' => 'Choose an option:', // The label for the field
+        //         // Other options if needed
+        //     ]);
+    }
+
+
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired('exercice_id');
+        // $resolver->setRequired('question_id'); // Define 'question_id' as a required option
+        // $resolver->setAllowedTypes('question_id', 'int'); // Ensure 'question_id' is of type integer
+    }
+}
     //     // public function configureOptions(OptionsResolver $resolver)
     //     // {
     //     //     $resolver->setRequired('question_id'); // Define 'question_id' as a required option
@@ -133,6 +149,50 @@ class PracticeType extends AbstractType
     // //             'data_class' => YourQuestionEntity::class,
     // //         ]);
     // //     }
-}
+
 
 // // // src/Form/ChoiceType.php
+
+
+// 
+// 
+// 
+
+
+// public function buildForm(FormBuilderInterface $builder, array $options)
+//     {
+
+//         $exercice_id = $options['exercice_id'];
+//         $exercice = $this->questionRepository->find($exercice_id);
+//         $questions = $exercice->getQuestions();
+
+
+
+//         // $question_id= $options['question_id'];
+
+//         $question = $this->questionRepository->find($question_id);
+//         // $question_id = $question_id;
+//         // $choix = [];
+//         // $choices = $question->getChoixReponses();
+//         // foreach ($choices as $choice) {
+//         //     array_push($choix, $choice);
+//         // }
+
+//         $choices = $question->getChoixReponses();
+//         $choix = [];
+//         $i = 0;
+//         foreach ($choices as $choice) {
+//             $choix[$choice->getChoix()] = $i;
+//         }
+//         dump($choix);
+
+//         $builder
+//             // ... other form fields ...
+//             ->add('choix', ChoiceType::class, [
+//                 'choices' => $choix,
+//                 'expanded' => true, // This will render the radio buttons instead of a select dropdown
+//                 'multiple' => false, // Set this to false to render radio buttons
+//                 'label' => 'Choose an option:', // The label for the field
+//                 // Other options if needed
+//             ]);
+//     }
