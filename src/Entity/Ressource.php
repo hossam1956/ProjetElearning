@@ -64,12 +64,9 @@ class Ressource
         return $this->lien;
     }
 
-    public function setLien($lien): self
+    public function setLien(?string $lien): self
     {
-        // Only set the lien property if the argument is not null and is a string
-        if ($lien !== null && is_string($lien)) {
-            $this->lien = $lien;
-        }
+        $this->lien = $lien;
 
         return $this;
     }

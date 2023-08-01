@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 use App\Entity\Section;
+use App\Entity\Formation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SectionRepository;
 use App\Repository\RessourceRepository;
+use App\Repository\FormationRepository;
 class SectionController extends AbstractController
 {
     /**
@@ -26,7 +28,7 @@ class SectionController extends AbstractController
             $entityManager->persist($section);
             $entityManager->flush();
 
-            return $this->redirectToRoute('showsection'); 
+            return $this->redirectToRoute('showformation'); 
         }
         return $this->render('section/index.html.twig', [
             'form' => $form->createView()
@@ -47,7 +49,7 @@ class SectionController extends AbstractController
             $entityManager->persist($section);
             $entityManager->flush();
 
-            return $this->redirectToRoute('showsection'); 
+            return $this->redirectToRoute('showformation'); 
         }
         return $this->render('section/edit.html.twig', [
             'form' => $form->createView()
@@ -70,14 +72,14 @@ class SectionController extends AbstractController
             }
             $entityManager->remove($section);
             $entityManager->flush();
-            return $this->redirectToRoute('showsection'); 
+            return $this->redirectToRoute('showformation'); 
     }
         /**
-     * @Route("/show/section", name="showsection")
+     * @Route("/show/{idformation}/section", name="showsection")
      */
 
-     public function showsection(SectionRepository $sectionRepository)
-    {    $section = $sectionRepository->findAll();
+     public function showsection(SectionRepository $sectionrepository,$idformation)
+    {    $section = $sectionrepository->findBy(['idformation' => $idformation]);
         
         return $this->render('section/showsection.html.twig', [
             'sections' => $section

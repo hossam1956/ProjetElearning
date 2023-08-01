@@ -47,7 +47,7 @@ class RessourceController extends AbstractController
             // You can add a flash message here to notify the user about successful registration.
            // $this->addFlash('success', 'Registration successful!');
 
-            return $this->redirectToRoute('home'); 
+            return $this->redirectToRoute('showformation'); 
         }
         return $this->render('ressource/index.html.twig', [
             'form' => $form->createView()
@@ -62,27 +62,16 @@ class RessourceController extends AbstractController
      */
     public function editressource(Ressource $ressource,Request $request)
     {   
-        $ressource1 = new Ressource();
-        $idsection = $ressource->getIdsection();
-        $ressource1->setId($ressource->getId());
-        $ressource1->setTitre($ressource->getTitre());
-        $ressource1->setType($ressource->getType());
-        $ressource1->setIdsection($ressource->getIdsection());
-        $form = $this->createForm(RessourceType::class, $ressource1);
+        $ressource->setLien(null);
+        $form = $this->createForm(RessourceType::class, $ressource);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $ressource1=$form->getData();
-            $lien = $form['lien']->getData();
-            $lien_name=$lien->getClientOriginalName();
-            $lien->move($this->getParameter("photo_directory"),$lien_name);
-            $ressource1->setLien($lien_name);
+            $ressource=$form->getData();
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($ressource);
-            $entityManager->flush();
-            $entityManager->persist($ressource1);
+            $entityManager->persist($ressource);
             $entityManager->flush();
 
-            return $this->redirectToRoute('showressource',['idsection' => $idsection]); 
+            return $this->redirectToRoute('showformation'); 
         }
         return $this->render('ressource/edit.html.twig', [
             'form' => $form->createView()
@@ -100,7 +89,7 @@ class RessourceController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($ressource);
             $entityManager->flush();
-            return $this->redirectToRoute('showressource',['idsection' => $idsection]); 
+            return $this->redirectToRoute('showformation'); 
     }
 
 

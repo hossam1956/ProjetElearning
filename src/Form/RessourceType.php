@@ -36,13 +36,13 @@ class RessourceType extends AbstractType
     }
 
         $builder
-        ->add('titre',TextType::class,["label"=>"titre"])
+        ->add('titre',TextType::class,["label"=>"Titre"])
         ->add('lien', FileType::class, [
             "label" => "fichier",
-            'required' => true,
+            'required' => false,
             
             ])
-        ->add('type',ChoiceType::class,[
+        ->add('Type',ChoiceType::class,[
             'choices' => [
                 'video' => 'video',
                 'power point' => 'ppt',
@@ -53,7 +53,7 @@ class RessourceType extends AbstractType
             ])
         ->add('idsection',ChoiceType::class,[
             'choices' => $sectionChoices,
-            'label'=>'section'
+            'label'=>'Section'
             
             ])
         ->add('Enregistrer',SubmitType::class)

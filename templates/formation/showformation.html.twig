@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello formation!{% endblock %}
+{% block stylesheets %} {{parent()}} {% endblock %}
+{% block javascripts %} {{parent()}} {% endblock %}
+{% block navabar %}
+{{parent()}}
+{% endblock %}
+{% block sidebar %}
+
+<div class="container d-flex mt-5 ">
+    <div class="asidBar col-3 mt-3">
+      <form action="{{path('search_form')}}" method="get">
+        <div class="input-group mb-3">
+          <input type="text" name="query" placeholder="Chercher par titre..." class="form-control" >
+          <button type="submit" class="btn btn-outline-secondary">Search</button>
+        </div>
+      </form>        
+        <a href="{{path('addformation')}}" class="btn btn-light ms-4 " style="width: 100px;display: inline; font-size: 12px;  "><i class="fa fa-plus" > Ajouter une formation</i></a>
+        <a href="{{path('addsection')}}" class="btn btn-light ms-4" style="width: 100px;display: inline; font-size: 12px;"><i class="fa fa-plus" > Ajouter une Section</i></a>
+        <a href="{{path('addressource')}}" class="btn btn-light  ms-4" style="width: 100px;display: inline; font-size: 12px;"><i class="fa fa-plus" > Ajouter une ressource</i></a>
+    </div>
+    
+    {% if formation is empty %}
+        <p class="container ms-5" style="font-size: 40px;">No results found.</p>
+    {% else %}
+        <ul>
+            {% for formations in formation %}
+            <div class="card ms-4" style="width: 200px">
+              <img src="{{asset('/uploads/'~formations.image)}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
+              <div class="card-body">
+                <h5 class="card-title" >{{formations.titre}}</h5>
+                <a href="{{path('showsection',{'idformation': formations.id})}}" class="btn btn-primary">Entrer</a>
+                <a href="{{path('editformation',{ 'id': formations.id})}}" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                <a href="{{path('deleteformation',{ 'id': formations.id})}}" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+              </div>
+            </div>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block body %}
+{% endblock %}
