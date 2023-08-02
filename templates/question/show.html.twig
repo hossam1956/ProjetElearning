@@ -1,0 +1,88 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Need to add the title here{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Need to add the title here
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if question.getChoixReponses() is empty %}
+                        {# {{exercice.questions}} #}
+                        <div class="alert alert-warning" role="alert">
+                            You need to add some response choices !
+                        </div>
+                    {% endif %}
+                    {# <div class="card-text">
+                        {{ exercice.body }}
+                    </div>
+                    <div class="card-text">
+                        {{ user }}
+                    </div> #}
+                    <ul>
+                        <td>
+                            <a href="{{ path('app_question.edit', {exercice_id : exercice_id, id : question.id}) }}" class="btn btn-warning">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                Edit question
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ path('app_choix', {question_id : question.id}) }}" class="btn btn-primary">
+                                <i class="fa-regular fa-eye"></i>
+                                View choices
+                            </a>
+                        </td>
+                        
+                        <td>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fa-solid fa-trash"></i>
+                                Delete Question
+                            </a>
+                        </td>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteModalLabel">Do you want to delete the question ?</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-danger">The question as well as all of its choices will be deleted !</p>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="{{ path('app_question.delete', {exercice_id : exercice_id, id : question.id}) }}" class="btn btn-danger">
+                            Confirm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{# <a href="{{ path('app_question.delete', {exercice_id : exercice_id, id : question.id}) }}" class="btn btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                                Delete Question
+                            </a> #}
+
+{# {% if is_granted('ROLE_USER') %}
+                                            {% if task.user.id == app.user.id %}
+                                                <a href="{{ path('task_edit', {id : task.id}) }}" class="btn btn-warning">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </a>
+                                                <a href="{{ path('task_delete', {id : task.id}) }}" class="btn btn-danger">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %} #}
