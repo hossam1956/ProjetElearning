@@ -34,20 +34,27 @@
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{{path('home')}}">Home</a>
                   </li>
+                  {% if app.user %}
                   <li class="nav-item">
                     <a class="nav-link" href="{{path('showformation')}}">Formations</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Profile</a>
                   </li>
+                  {% endif %}
                   <li class="nav-item">
                     <a class="nav-link" href="#footer">Contacter nous</a>
                   </li>
                 </ul>
                 <form class="d-flex" >
-                  <a class="btn btn-outline-success me-2" href="#">Connexion</a>
+                  
+                  
+                  {% if app.user %}
+                  <a class="btn btn-outline-danger me-2" href="{{path('app_logout')}}">Deconnexion</a>
+                  {% else %}
+                  <a class="btn btn-outline-success me-2" href="{{path('app_login')}}">Connexion</a>
                   <a class="btn btn-outline-success me-2" href="#">Inscription</a>
-                  <a class="btn btn-outline-danger me-2" href="#">Deconnexion</a>
+                  {% endif %}
                 </form>
               </div>
             </div>
