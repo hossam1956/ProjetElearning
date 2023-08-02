@@ -2,160 +2,121 @@
 
 {% block title %}Liste choix{% endblock %}
 
-{# {% block stylesheets %}
-    <style type="text/css">
-        body {
-            background-color: #336699;
-        }
-    </style>
-{% endblock %} #}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+{% endblock %}
 
 {% block body %}
-    <div class="container">
-    {# <h2>Index</h2>
-    <p class="important">
-        Welcome on my awesome homepage.
-    </p> #}
-
-    <div class="row my-5">
-        <div class="col-md-8 mx-auto">
-        {% for message in app.flashes("success") %}
-            <div class="alert alert-success">
-                {{ message }}
-                {# {{ app.flashes("success") }} #}
-            </div>
-        {% endfor %}
-            <div class="card">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Choix</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for choice in choix %}
-                            <tr>
-                                <td scope="row">{{ choice.id }}</td>
-                                <td>{{ choice.choix }}</td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                        <i class="fa-solid fa-trash"></i>
-                                        Delete choice
-                                    </button>
-
-                                    <a href="{{ path('app_choix.edit', {question_id : question_id, id : choice.id}) }}" class="btn btn-warning">
-                                        Edit choice
-                                        <i class="fa-solid fa-pen-to-square"></i>
+<div class="body">
+    <div class="sidebar row my-5">
+        <div class="d-flex flex-column flex-shrink-0 p-3" style="width: 280px;">
+            <a href="
+                {{ path('app_exercice.show', {id : question.exercice.id}) }}
+            " class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">{{ question.exercice.titre }}</span>
+            </a>
+            <ul class="nav nav-pills flex-column mb-auto">
+                {% for question in question.exercice.questions %}
+                    <li class="nav-item">
+                        <a href="
+                            {{ path('app_question.show', {exercice_id : question.exercice.id, id : question.id}) }}
+                        " class="nav-link" aria-current="page">
+                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                            {{question.question}}
+                        </a>
+                        <ul class="nav nav-pills flex-column mb-auto">
+                            {% for choix in question.getChoixReponses() %}
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page">
+                                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                                        {{choix.choix}}
                                     </a>
-                                </td>
-                            </tr>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="deleteModalLabel">Do you want to delete the response choice ?</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p class="text-danger">The choice will be deleted !</p>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <a href="{{ path('app_choix.delete', {question_id : question_id, id : choice.id}) }}" class="btn btn-danger">
-                                                Confirm
+    <div class="container">
+        <div class="row my-5">
+            <div class="col-md-8 mx-auto">
+                {% for message in app.flashes("success") %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {% if question.getChoixReponses() is empty %}
+                    <div class="alert alert-warning" role="alert">
+                        Vous devez ajouter des choix de réponses !
+                    </div>
+                {% elseif question.getChoixReponses()|length < 2 %}
+                    <div class="alert alert-warning" role="alert">
+                        Vous devez avoir au moins deux choix de réponses !
+                    </div>
+                {% endif %}
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Choix</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for choice in choix %}
+                                <tr>
+                                    <td scope="row">{{ choice.id }}</td>
+                                    <td>{{ choice.choix }}</td>
+                                    <td>
+                                        <div class="actions">
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                <i class="fa-solid fa-trash"></i>
+                                                Supprimer choix
+                                            </button>
+
+                                            <a href="{{ path('app_choix.edit', {question_id : question_id, id : choice.id}) }}" class="btn btn-warning">
+                                                Modifier choix
+                                                <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="deleteModalLabel">Êtes-vous sûr(e) de vouloir supprimer ce choix de réponse ?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="text-danger">Le choix va être supprimé !</p>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuller</button>
+                                                <a href="{{ path('app_choix.delete', {question_id : question_id, id : choice.id}) }}" class="btn btn-danger">
+                                                    Supprimer
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <a href="{{ path('app_choix.add', {question_id : question_id}) }}" class="btn btn-primary">
-                    <i class="fa-solid fa-plus"></i>                
-                    Add a response choice
-                </a>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{{ path('app_choix.add', {question_id : question_id}) }}" class="btn btn-primary">
+                        <i class="fa-solid fa-plus"></i>                
+                        Ajouter un choix de réponse
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
-
-{# {% block javascripts %}
-    
-{% endblock %} #}
-
-{# {% if is_granted('ROLE_USER') %}
-                                        {% if task.user.id == app.user.id %}
-                                            <a href="{{ path('task_edit', {id : task.id}) }}" class="btn btn-warning">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </a>
-                                            <a href="{{ path('task_delete', {id : task.id}) }}" class="btn btn-danger">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </a>
-                                        {% endif %}
-                                    {% endif %} #}
-
-
-
-
-
-{# {% block body %}
-    <div class="container"> #}
-    {# <h2>Index</h2>
-    <p class="important">
-        Welcome on my awesome homepage.
-    </p> #}
-
-    {# <div class="row my-5">
-        <div class="col-md-8 mx-auto">
-        {% for message in app.flashes("success") %}
-            <div class="alert alert-success">
-                {{ message }} #}
-                {# {{ app.flashes("success") }} #}
-            {# </div>
-        {% endfor %}
-            <div class="card">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Choix</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for choice in choix %}
-                            <tr>
-                                <td scope="row">{{ choice.id }}</td>
-                                <td>{{ choice.choix }}</td>
-                                <td>
-                                    <a href="{{ path('app_choix.delete', {question_id : question_id, id : choice.id}) }}" class="btn btn-danger">
-                                        Delete<i class="fa-solid fa-trash"></i>
-                                    </a> #}
-                                    {# {% if is_granted('ROLE_USER') %}
-                                        {% if task.user.id == app.user.id %}
-                                            <a href="{{ path('task_edit', {id : task.id}) }}" class="btn btn-warning">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </a>
-                                            <a href="{{ path('task_delete', {id : task.id}) }}" class="btn btn-danger">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </a>
-                                        {% endif %}
-                                    {% endif %} #}
-                                {# </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <a href="{{ path('app_choix.add', {question_id : question_id}) }}" class="btn btn-primary">
-                    <i class="fa-solid fa-plus"></i>                
-                    Add a response choice
-                </a>
-            </div>
-        </div>
-    </div>
-{% endblock %} #}
-

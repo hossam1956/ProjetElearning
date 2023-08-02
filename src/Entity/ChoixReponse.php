@@ -23,7 +23,7 @@ class ChoixReponse
     private $choix;
 
     /**
-     * @ORM\ManyToOne(targetEntity=question::class, inversedBy="choixReponses")
+     * @ORM\ManyToOne(targetEntity=Question::class, inversedBy="choixReponses")
      */
     private $question;
 

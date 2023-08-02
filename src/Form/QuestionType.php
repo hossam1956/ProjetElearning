@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Question;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,8 +16,8 @@ class QuestionType extends AbstractType
     {
         $builder
             ->add('question', TextType::class)
-            ->add('reponse', IntegerType::class)
-            ->add('valider', SubmitType::class); // <input type="submit" value="">
+            // ->add('reponse', IntegerType::class)
+            ->add('valider', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
