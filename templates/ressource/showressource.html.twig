@@ -7,7 +7,9 @@
 {{parent()}}
 {% endblock %}
 {% block body %}
+{% if app.user and app.user.getRole() == 'formateur' %} 
 <a href="{{path('addressource')}}" class="btn btn-light mt-4 ms-4 " style="width: 200px;display: inline;"><i class="fa fa-plus" > Ajouter une ressource</i></a>
+{% endif %}
 <table class="table">
   <thead>
     <tr>
@@ -24,9 +26,11 @@
       <td>{{ressource.titre}}</td>
       <td>
         <a href="{{path('download_doc',{'id': ressource.id})}}" class="btn btn-light"><i class="fa-solid fa-download"></i></a>
+        {% if app.user and app.user.getRole() == 'formateur' %} 
         <a href="{{path('editressource',{'idsection': ressource.idsection, 'id': ressource.id})}}" class="btn btn-warning " ><i class="fa-solid fa-pen-to-square"></i></a>
         <a href="{{path('deleteressource',{'idsection': ressource.idsection, 'id': ressource.id})}}" class="btn btn-danger " ><i class="fa-solid fa-trash"></i></a>
-    </td>
+        {% endif %}
+      </td>
       
     
     </tr>
@@ -41,23 +45,16 @@
         <td scope="row">{{ exercice.id }}</td>
         <td>{{ exercice.titre }}</td>
         <td>
+          {% if app.user and app.user.getRole() == 'formateur' %} 
             <a href="{{ path('app_exercice.show', {id : exercice.id}) }}" class="btn btn-primary">
                 Show exercise <i class="fa-regular fa-eye"></i>
             </a>
+          {% endif %}
             <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
                 <i class="fa-solid fa-book"></i>
                 Take exercise 
             </a>
-            {# {% if is_granted('ROLE_USER') %}
-                {% if task.user.id == app.user.id %}
-                    <a href="{{ path('task_edit', {id : task.id}) }}" class="btn btn-warning">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </a>
-                    <a href="{{ path('task_delete', {id : task.id}) }}" class="btn btn-danger">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                {% endif %}
-            {% endif %} #}
+        
         </td>
     </tr>
     {% endfor %}

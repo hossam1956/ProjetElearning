@@ -34,7 +34,7 @@ class UserType extends AbstractType
             'required' => false
             
         ])
-        ->add('valider',SubmitType::class)
+        
         ;
     }
 

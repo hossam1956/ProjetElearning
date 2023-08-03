@@ -15,12 +15,14 @@
           <input type="text" name="query" placeholder="Chercher par titre..." class="form-control" >
           <button type="submit" class="btn btn-outline-secondary">Search</button>
         </div>
-      </form>        
+      </form>  
+      {% if app.user and app.user.getRole() == 'formateur' %}      
         <a href="{{path('addformation')}}" class="btn btn-light ms-4 " style="width: 100px;display: inline; font-size: 12px;  "><i class="fa fa-plus" > Ajouter une formation</i></a>
         <a href="{{path('addsection')}}" class="btn btn-light ms-4" style="width: 100px;display: inline; font-size: 12px;"><i class="fa fa-plus" > Ajouter une Section</i></a>
         <a href="{{path('addressource')}}" class="btn btn-light  ms-4" style="width: 100px;display: inline; font-size: 12px;"><i class="fa fa-plus" > Ajouter une ressource</i></a>
         <a href="{{path('app_exercice.add')}}" class="btn btn-light mt-4 ms-4 " style="width: 100px;display: inline; font-size: 12px;"><i class="fa fa-plus" > Ajouter un exercice</i></a>
-    </div>
+      {% endif %}
+      </div>
     
     {% if formation is empty %}
         <p class="container ms-5" style="font-size: 40px;">No results found.</p>
@@ -32,8 +34,10 @@
               <div class="card-body">
                 <h5 class="card-title" >{{formations.titre}}</h5>
                 <a href="{{path('showsection',{'idformation': formations.id})}}" class="btn btn-primary">Entrer</a>
+                {% if app.user and app.user.getRole() == 'formateur' %}
                 <a href="{{path('editformation',{ 'id': formations.id})}}" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
                 <a href="{{path('deleteformation',{ 'id': formations.id})}}" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                {% endif %}
               </div>
             </div>
             {% endfor %}
