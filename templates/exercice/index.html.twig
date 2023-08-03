@@ -40,9 +40,11 @@
                                     <td scope="row">{{ exercice.id }}</td>
                                     <td>{{ exercice.titre }}</td>
                                     <td>
+                                        {% if app.user and app.user.getRole() == 'formateur' %} 
                                         <a href="{{ path('app_exercice.show', {id : exercice.id}) }}" class="btn btn-primary">
                                             Show exercise <i class="fa-regular fa-eye"></i>
                                         </a>
+                                        {% endif %}
                                         <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
                                             <i class="fa-solid fa-book"></i>
                                             Take exercise 
@@ -62,10 +64,12 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    {% if app.user and app.user.getRole() == 'formateur' %}
                     <a href="{{ path('app_exercice.add') }}" class="btn btn-primary">
                         <i class="fa-solid fa-plus"></i>                
                         Add an exercise
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
