@@ -60,6 +60,7 @@ class ExerciceController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $exercice = $form->getData();
+          
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($exercice);
             $entityManager->flush();

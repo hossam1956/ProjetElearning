@@ -29,7 +29,7 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <a class="navbar-brand" href="#"><img class="img-fluid" style=" height: 50px;" src="https://cdn.glitch.global/954faddc-7b28-4010-80c3-c42f104147ea/4-logo3.png?v=1690188837352"></a>
+                <a class="navbar-brand" href="{{path('home')}}"><img class="img-fluid" style=" height: 50px;" src="https://cdn.glitch.global/954faddc-7b28-4010-80c3-c42f104147ea/4-logo3.png?v=1690188837352"></a>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{{path('home')}}">Home</a>
@@ -39,12 +39,23 @@
                     <a class="nav-link" href="{{path('showformation')}}">Formations</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Profile</a>
+                    <a class="nav-link" href="{{path('app_exercice')}}">Exercices</a>
                   </li>
+                  {% if app.user and app.user.getRole() == 'admin' %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Options
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="nav-link" href="{{path('GestionUser')}}">Gestion de role d'utilisateur </a></li>
+                    </ul>
+                  </li>
+                  {% endif %}
                   {% endif %}
                   <li class="nav-item">
                     <a class="nav-link" href="#footer">Contacter nous</a>
                   </li>
+
                 </ul>
                 <form class="d-flex" >
                   
@@ -53,7 +64,6 @@
                   <a class="btn btn-outline-danger me-2" href="{{path('app_logout')}}">Deconnexion</a>
                   {% else %}
                   <a class="btn btn-outline-success me-2" href="{{path('app_login')}}">Connexion</a>
-                  <a class="btn btn-outline-success me-2" href="#">Inscription</a>
                   {% endif %}
                 </form>
               </div>
