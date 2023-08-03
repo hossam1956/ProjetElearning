@@ -10,9 +10,12 @@ use App\Form\RessourceType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RessourceRepository;
-
+use App\Repository\ExerciceRepository;
 class RessourceController extends AbstractController
-{
+{   public function __construct(ExerciceRepository $exerciceRepository)
+    {
+        $this->exerciceRepository = $exerciceRepository;
+    }
 
       /**
      * @Route("/home", name="home")
@@ -101,11 +104,12 @@ class RessourceController extends AbstractController
      * @Route("/show/{idsection}/ressource", name="showressource")
      */
 
-     public function showressource(RessourceRepository $ressourceRepository,$idsection)
-    {    $ressource = $ressourceRepository->findBy(['idsection' => $idsection]);
-        
+     public function showressource(RessourceRepository $ressourceRepository,ExerciceRepository $exerciceRepository,$idsection)
+    {   $ressource = $ressourceRepository->findBy(['idsection' => $idsection]);
+        $exercices = $this->exerciceRepository->findBy(['section' => $idsection]);
         return $this->render('ressource/showressource.html.twig', [
-            'ressources' => $ressource
+            'ressources' => $ressource,
+            "exercices" => $exercices,
         ]);
     }
 

@@ -34,6 +34,7 @@ class ExerciceController extends AbstractController
             "exercices" => $exercices,
         ]);
     }
+    
     /**
      * @Route("/exercice/show/{id}", name="app_exercice.show")
      */
@@ -67,6 +68,7 @@ class ExerciceController extends AbstractController
             // $form->getData() holds the submitted values
             // but, the original `$exercice` variable has also been updated
             $exercice = $form->getData();
+           // $this->setSection($section);
             // $user = $this->getUser();
             // $exercice->setUser($user);
 

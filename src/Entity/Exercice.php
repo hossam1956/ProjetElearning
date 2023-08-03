@@ -29,6 +29,11 @@ class Exercice
      */
     private $questions;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Section::class, inversedBy="exercices")
+     */
+    private $section;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
@@ -77,6 +82,18 @@ class Exercice
                 $question->setExercice(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSection(): ?Section
+    {
+        return $this->section;
+    }
+
+    public function setSection(?Section $section): self
+    {
+        $this->section = $section;
 
         return $this;
     }

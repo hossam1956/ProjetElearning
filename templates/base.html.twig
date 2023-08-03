@@ -41,6 +41,9 @@
                   <li class="nav-item">
                     <a class="nav-link" href="#">Profile</a>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{path('app_exercice')}}">Exercices</a>
+                  </li>
                   {% endif %}
                   <li class="nav-item">
                     <a class="nav-link" href="#footer">Contacter nous</a>
@@ -53,7 +56,7 @@
                   <a class="btn btn-outline-danger me-2" href="{{path('app_logout')}}">Deconnexion</a>
                   {% else %}
                   <a class="btn btn-outline-success me-2" href="{{path('app_login')}}">Connexion</a>
-                  <a class="btn btn-outline-success me-2" href="#">Inscription</a>
+                  <a class="btn btn-outline-success me-2" href="{{path('app_register')}}">Inscription</a>
                   {% endif %}
                 </form>
               </div>

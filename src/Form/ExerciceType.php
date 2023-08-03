@@ -9,14 +9,36 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
+use App\Repository\SectionRepository;
 
 class ExerciceType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function __construct(SectionRepository $sectionRepository)
     {
+        $this->sectionRepository = $sectionRepository;
+    }
+
+
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {   $sections = $this->sectionRepository->createQueryBuilder('f')
+        ->orderBy('f.id', 'ASC')
+        ->getQuery()
+        ->getResult();
+
+         $sectionChoices = [];
+        foreach ($sections as $section) {
+            $sectionChoices[$section->getTitre()] = $section;
+                                        }
         $builder
             ->add('titre', TextType::class)
+            ->add('section',ChoiceType::class,[
+                'choices' => $sectionChoices,
+                'label'=>'Section'
+                
+                ])
             ->add('valider', SubmitType::class); // <input type="submit" value="">
     }
 

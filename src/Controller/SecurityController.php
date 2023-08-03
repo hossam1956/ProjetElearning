@@ -6,9 +6,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use App\Form\UserType;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use App\Entity\User;
 
 class SecurityController extends AbstractController
-{
+{   private $passwordEncoder;
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder=$passwordEncoder;
+    }
     /**
      * @Route("/login", name="app_login")
      */
@@ -24,6 +33,51 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    }
+
+    
+    /**
+     * @Route("/register", name="app_register")
+     */
+    public function register(Request $request)
+    {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+        
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user=$form->getData();
+            $passwordhashed=$this->passwordEncoder->encodePassword($user,$user->getPassword());
+            $user->setPassword($passwordhashed);
+            //image upload
+           // $photo=$request->files->get("user_photo");
+            $photo = $form['photo']->getData();
+            $photo_name=$photo->getClientOriginalName();
+            $photo->move($this->getParameter("photo_directory"),$photo_name);
+            $user->setPhoto($photo_name);
+            //------
+            $entityManager = $this->getDoctrine()->getManager();
+           $inputValueRole = $user->getRole();
+            if($inputValueRole == true){
+                $user->setRole("formateur");
+            }
+            else{
+                $user->setRole("user");
+            }
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // You can add a flash message here to notify the user about successful registration.
+            $this->addFlash('success', 'Registration successful!');
+
+            return $this->redirectToRoute('app_login'); // Redirect to the login page after successful registration.
+        }
+
+        return $this->render('Security/register.html.twig', [
+            'form' => $form->createView()
+        ]);
+        
     }
 
     /**
