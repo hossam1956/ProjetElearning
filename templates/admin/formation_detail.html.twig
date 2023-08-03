@@ -1,0 +1,74 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Fomations</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Formations</li>
+                        </ol>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Formations existantes
+                            </div>
+                            <div class="card-body">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>Catégorie</th>
+                                            <th>Nom</th>
+                                            <th>Description</th>
+                                            <th>Formateure</th>
+                                            <th>Plus</th>
+                                            <th>Something else like nombre inscrit / liste des inscrits... / ajouter le / modifiée le ...</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Catégorie</th>
+                                            <th>Nom</th>
+                                            <th>Description</th>
+                                            <th>Formateure</th>
+                                            <th>Plus</th>
+                                            <th>Something else like nombre inscrit / liste des inscrits... / ajouter le / modifiée le ...</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        <tr>
+                                            <td>Web</td>
+                                            <td>JavaScript</td>
+                                            <td>Ce cour permet de  ...</td>
+                                            <td>Formateur 1</td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary">
+                                                    Afficher détails <i class="fa-regular fa-eye"></i>
+                                                </a>
+                                            </td>
+                                            <td>2011/04/25</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+{% endblock %}

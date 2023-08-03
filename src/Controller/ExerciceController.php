@@ -8,7 +8,6 @@ use App\Form\PracticeType;
 use App\Repository\ExerciceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,30 +33,25 @@ class ExerciceController extends AbstractController
             "exercices" => $exercices,
         ]);
     }
-    
+
     /**
      * @Route("/exercice/show/{id}", name="app_exercice.show")
      */
-    
     public function showExercice($id)
     {
         $exercice = $this->exerciceRepository->find($id);
-
         if (!$exercice) {
-            throw $this->createNotFoundException('No exercice found for id ' . $id);
+            throw $this->createNotFoundException('Aucun exercice trouvé pour l\'id ' . $id);
         }
-
-        // dd($exercice->getQuestions());
 
         return $this->render('exercice/show.html.twig', [
             "exercice" => $exercice,
-            // "user" => $exercice->getUser()->getUsername()
         ]);
     }
-     /**
+
+    /**
      * @Route("/exercice/add", name="app_exercice.add")
      */
- 
     public function addExercice(Request $request)
     {
         $exercice = new Exercice();
@@ -65,19 +59,12 @@ class ExerciceController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$exercice` variable has also been updated
             $exercice = $form->getData();
-           // $this->setSection($section);
-            // $user = $this->getUser();
-            // $exercice->setUser($user);
-
-            // ... perform some action, such as saving the task to the database
-            // for example, if Task is a Doctrine entity, save it!
+          
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($exercice);
             $entityManager->flush();
-            $this->flashMessage->add("success", "Exercise added, now let's add some questions!");
+            $this->flashMessage->add("success", "Exercise ajouté, maintenant ajoutez des questions !");
 
             return $this->redirectToRoute('app_exercice');
         }
@@ -86,7 +73,8 @@ class ExerciceController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-     /**
+
+    /**
      * @Route("/exercice/edit/{id}", name="app_exercice.edit")
      */
     public function editExercice(Exercice $exercice, Request $request)
@@ -95,12 +83,11 @@ class ExerciceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $exercice = $form->getData();
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($exercice);
             $entityManager->flush();
-            $this->flashMessage->add("success", "exercice modifié !");
+            $this->flashMessage->add("success", "L'exercice est bien modifié !");
 
             return $this->redirectToRoute('app_exercice');
         }
@@ -109,13 +96,13 @@ class ExerciceController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/exercice/delete/{id}", name="app_exercice.delete")
      */
     public function deleteExercice(Exercice $exercice)
     {
         $entityManager = $this->getDoctrine()->getManager();
-
         $questions = $exercice->getQuestions();
 
         foreach ($questions as $question) {
@@ -126,12 +113,13 @@ class ExerciceController extends AbstractController
             $entityManager->remove($question);
         }
 
-        $entityManager->remove($exercice); // delete the exercice
-        $entityManager->flush(); // mettre à jour la db
-        $this->flashMessage->add("success", "Exercice supprimée !");
+        $entityManager->remove($exercice);
+        $entityManager->flush();
+        $this->flashMessage->add("success", "L'exercice est bien supprimé !");
 
         return $this->redirectToRoute('app_exercice');
     }
+
     /**
      * @Route("/exercice/practice/{exercice_id}", name="app_exercice.practice")
      */
@@ -143,12 +131,9 @@ class ExerciceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $response = $form->getData();
             $session->set('reponse', $response);
-            // dd($session->get('reponse'));
 
-            $this->flashMessage->add("success", "Vos réponse sont bien enregistrées!");
+            $this->flashMessage->add("success", "Vos réponses sont bien enregistrées !");
             $exercice = $this->exerciceRepository->find($exercice_id);
-            // dd($exercice);
-            // dump($exercice);
             $questions = $exercice->getQuestions();
 
             $score = 0;
@@ -157,25 +142,15 @@ class ExerciceController extends AbstractController
             foreach ($questions as $question) {
                 if ($response["choix" . $i] == $question->getReponse()) {
                     $score += 100 / $number_of_questions;
-                    // echo "hi";
                 }
                 $i++;
-                // echo $response["choix" . $i] . "<br />";
-                // echo $question->getReponse() . "<br />";
-                // echo '----------------------------------<br />';
             }
-
-            // print_r($response);
-
-            // echo $score;
-            // dump($response);
 
             return $this->redirectToRoute(
                 'app_exercice.result',
                 [
                     'score' => $score,
                     'exercice_id' => $exercice_id,
-                    // 'reponse' => $response
                 ]
             );
         }
@@ -184,7 +159,8 @@ class ExerciceController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-     /**
+
+    /**
      * @Route("/exercice/{exercice_id}/resultat/{score}", name="app_exercice.result")
      */
     public function result($score, $exercice_id)
@@ -196,70 +172,7 @@ class ExerciceController extends AbstractController
             [
                 'score' => $score,
                 'exercice' => $exercice,
-                // 'reponse' => $response
             ]
         );
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // #[Route('/practice/{id}', name: 'app_exercice.practice')]
-    // public function practiceExercice($id)
-    // {
-    //     $exercice = $this->exerciceRepository->find($id);
-
-    //     if (!$exercice) {
-    //         throw $this->createNotFoundException('No exercice found for id ' . $id);
-    //     }
-
-    //     return $this->render('exercice/practice.html.twig', [
-    //         "exercice" => $exercice,
-    //         // "user" => $exercice->getUser()->getUsername()
-    //     ]);
-    // }
-
-    // #[Route('/practice/{id}', name: 'app_exercice.practice')]
-    // public function practiceExercice($id)
-    // {
-    //     $exercice = $this->exerciceRepository->find($id);
-
-    //     if (!$exercice) {
-    //         throw $this->createNotFoundException('No exercice found for id ' . $id);
-    //     }
-
-    //     $form = $this->createForm(PracticeType::class, null, ['question_id' => $questionId]);
-
-    //     $form->handleRequest($request);
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         // $form->getData() holds the submitted values
-    //         // but, the original `$exercice` variable has also been updated
-    //         $exercice = $form->getData();
-    //         // $user = $this->getUser();
-    //         // $exercice->setUser($user);
-
-    //         // ... perform some action, such as saving the task to the database
-    //         // for example, if Task is a Doctrine entity, save it!
-    //         $entityManager = $this->getDoctrine()->getManager();
-    //         $entityManager->persist($exercice);
-    //         $entityManager->flush();
-    //         $this->flashMessage->add("success", "Exercise added, now let's add some questions!");
-
-    //         return $this->redirectToRoute('app_exercice');
-    //     }
-
-    //     return $this->render('exercice/practice.html.twig', [
-    //         "exercice" => $exercice,
-    //         // "user" => $exercice->getUser()->getUsername()
-    //     ]);
-    // }
 }

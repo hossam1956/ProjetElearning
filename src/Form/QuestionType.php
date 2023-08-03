@@ -18,7 +18,7 @@ class QuestionType extends AbstractType
         $builder
             ->add('question', TextType::class)
             ->add('reponse', IntegerType::class)
-            ->add('valider', SubmitType::class); // <input type="submit" value="">
+            ->add('valider', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
