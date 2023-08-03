@@ -20,12 +20,12 @@ class Question
     private $id;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
-    private $question;
+    private ?string $question = null;
 
     /**
-     * @ORM\Column(type="smallint", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $reponse;
 

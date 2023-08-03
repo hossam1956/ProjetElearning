@@ -41,7 +41,7 @@ class ExerciceController extends AbstractController
     {
         $exercice = $this->exerciceRepository->find($id);
         if (!$exercice) {
-            throw $this->createNotFoundException('No exercice found for id ' . $id);
+            throw $this->createNotFoundException('Aucun exercice trouvé pour l\'id ' . $id);
         }
 
         return $this->render('exercice/show.html.twig', [
@@ -63,7 +63,7 @@ class ExerciceController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($exercice);
             $entityManager->flush();
-            $this->flashMessage->add("success", "Exercise added, now let's add some questions!");
+            $this->flashMessage->add("success", "Exercise ajouté, maintenant ajoutez des questions !");
 
             return $this->redirectToRoute('app_exercice');
         }
@@ -86,7 +86,7 @@ class ExerciceController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($exercice);
             $entityManager->flush();
-            $this->flashMessage->add("success", "exercice modifié !");
+            $this->flashMessage->add("success", "L'exercice est bien modifié !");
 
             return $this->redirectToRoute('app_exercice');
         }
@@ -114,7 +114,7 @@ class ExerciceController extends AbstractController
 
         $entityManager->remove($exercice);
         $entityManager->flush();
-        $this->flashMessage->add("success", "Exercice supprimée !");
+        $this->flashMessage->add("success", "L'exercice est bien supprimé !");
 
         return $this->redirectToRoute('app_exercice');
     }
@@ -131,7 +131,7 @@ class ExerciceController extends AbstractController
             $response = $form->getData();
             $session->set('reponse', $response);
 
-            $this->flashMessage->add("success", "Vos réponse sont bien enregistrées!");
+            $this->flashMessage->add("success", "Vos réponses sont bien enregistrées !");
             $exercice = $this->exerciceRepository->find($exercice_id);
             $questions = $exercice->getQuestions();
 

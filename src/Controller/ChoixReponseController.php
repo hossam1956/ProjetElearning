@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\ChoixReponse;
 use App\Entity\Question;
 use App\Form\ChoixReponseType;
+use App\Form\QuestionType;
 use App\Repository\ChoixReponseRepository;
+use App\Repository\QuestionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -14,27 +16,49 @@ use Symfony\Component\Routing\Annotation\Route;
 class ChoixReponseController extends AbstractController
 {
     private $choixRepository;
+    private $questionRepository;
     private $flashMessage;
 
-    public function __construct(ChoixReponseRepository $choixRepository, FlashBagInterface $flashMessage)
+    public function __construct(ChoixReponseRepository $choixRepository, QuestionRepository $questionRepository, FlashBagInterface $flashMessage)
     {
         $this->choixRepository = $choixRepository;
+        $this->questionRepository = $questionRepository;
         $this->flashMessage = $flashMessage;
     }
 
     /**
      * @Route("/{question_id}/choix", name="app_choix")
      */
-    public function listChoixParQuestion($question_id)
+    public function index($question_id, Request $request)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $question = $entityManager->getRepository(Question::class)->find($question_id);
+        $question = $this->questionRepository->find($question_id);
+
+        if (!$question) {
+            throw $this->createNotFoundException('Aucune question trouvée pour l\'id ' . $question_id);
+        }
+
         $choix = $question->getChoixReponses();
+
+        $form = $this->createForm(QuestionType::class, $question);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $question = $form->getData();
+
+            if ($question->getReponse() <= 0 || $question->getReponse() > count($choix)) {
+                $this->flashMessage->add("error", "La réponse précisée ne correspond pas aux choix de réponses existants !");
+            } else {
+                $entityManager->persist($question);
+                $entityManager->flush();
+                $this->flashMessage->add("success", "La réponse est bien précisée !");
+            }
+        }
 
         return $this->render('choix_reponse/index.html.twig', [
             "choix" => $choix,
-            'question_id' => $question_id,
-            'question' => $question
+            'question' => $question,
+            'form' => $form->createView()
         ]);
     }
 
@@ -56,7 +80,7 @@ class ChoixReponseController extends AbstractController
 
             $entityManager->persist($choix);
             $entityManager->flush();
-            $this->flashMessage->add("success", "Choix ajouté !");
+            $this->flashMessage->add("success", "Le choix est bien ajouté !");
 
             return $this->redirectToRoute(
                 'app_choix',
@@ -83,7 +107,7 @@ class ChoixReponseController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($choix);
             $entityManager->flush();
-            $this->flashMessage->add("success", "Choix modifié !");
+            $this->flashMessage->add("success", "Le choix est bien modifié !");
 
             return $this->redirectToRoute(
                 'app_choix',
@@ -104,7 +128,7 @@ class ChoixReponseController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($choix);
         $entityManager->flush();
-        $this->flashMessage->add("success", "Choix supprimée!");
+        $this->flashMessage->add("success", "Le choix est bien supprimé !");
 
         return $this->redirectToRoute(
             'app_choix',

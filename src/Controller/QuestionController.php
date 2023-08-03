@@ -46,7 +46,7 @@ class QuestionController extends AbstractController
         $question = $this->questionRepository->find($id);
         // $entityManager = $this->getDoctrine()->getManager();
         if (!$question) {
-            throw $this->createNotFoundException('No question found for id ' . $id);
+            throw $this->createNotFoundException('Aucune question trouvée pour l\'id ' . $id);
         }
 
         return $this->render('question/show.html.twig', [
@@ -62,8 +62,8 @@ class QuestionController extends AbstractController
     {
         $question = new Question();
         $form = $this->createForm(QuestionType::class, $question);
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $question = $form->getData();
             $entityManager = $this->getDoctrine()->getManager();
@@ -75,7 +75,7 @@ class QuestionController extends AbstractController
 
             $entityManager->persist($question);
             $entityManager->flush();
-            $this->flashMessage->add("success", "Question added, now let's add some choices!");
+            $this->flashMessage->add("success", "Question ajoutée, maintenant ajoutez des choix de réponse !");
 
             return $this->redirectToRoute(
                 'app_question',
@@ -103,7 +103,7 @@ class QuestionController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($question);
             $entityManager->flush();
-            $this->flashMessage->add("success", "question modifié !");
+            $this->flashMessage->add("success", "La question est bien modifiée !");
 
             return $this->redirectToRoute(
                 'app_question',
@@ -130,7 +130,7 @@ class QuestionController extends AbstractController
 
         $entityManager->remove($question);
         $entityManager->flush();
-        $this->flashMessage->add("success", "Question supprimée !");
+        $this->flashMessage->add("success", "La question est bien supprimée !");
 
         return $this->redirectToRoute(
             'app_question',

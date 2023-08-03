@@ -50,6 +50,16 @@
                         {{ message }}
                     </div>
                 {% endfor %}
+                {% for message in app.flashes("error") %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {% if question.reponse == 0 and question.choixReponses | length > 1 %}
+                    <div class="alert alert-warning">
+                        Le réponse juste n'est pas précisée !
+                    </div>
+                {% endif %}
                 {% if question.getChoixReponses() is empty %}
                     <div class="alert alert-warning" role="alert">
                         Vous devez ajouter des choix de réponses !
@@ -69,9 +79,10 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% set i = 1 %}
                             {% for choice in choix %}
                                 <tr>
-                                    <td scope="row">{{ choice.id }}</td>
+                                    <td>{{ i }}</td>
                                     <td>{{ choice.choix }}</td>
                                     <td>
                                         <div class="actions">
@@ -81,10 +92,13 @@
                                                 Supprimer choix
                                             </button>
 
-                                            <a href="{{ path('app_choix.edit', {question_id : question_id, id : choice.id}) }}" class="btn btn-warning">
+                                            <a href="{{ path('app_choix.edit', {question_id : question.id, id : choice.id}) }}" class="btn btn-warning">
                                                 Modifier choix
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
+                                            {% if i == question.reponse %}
+                                                <p class="text-success">Ceci est la bonne réponse !</p>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
@@ -100,23 +114,38 @@
                                             <div class="modal-body">
                                                 <p class="text-danger">Le choix va être supprimé !</p>
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuller</button>
-                                                <a href="{{ path('app_choix.delete', {question_id : question_id, id : choice.id}) }}" class="btn btn-danger">
+                                                <a href="{{ path('app_choix.delete', {question_id : question.id, id : choice.id}) }}" class="btn btn-danger">
                                                     Supprimer
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                {% set i = i + 1 %}
                             {% endfor %}
                         </tbody>
                     </table>
-                    <a href="{{ path('app_choix.add', {question_id : question_id}) }}" class="btn btn-primary">
+                    <a href="{{ path('app_choix.add', {question_id : question.id}) }}" class="btn btn-primary">
                         <i class="fa-solid fa-plus"></i>                
                         Ajouter un choix de réponse
                     </a>
                 </div>
             </div>
         </div>
+        {% if question.choixReponses|length > 1 %}
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Définir ou changer la réponse</h3>
+                        <p>Entrez l'ID qui correspond à la réponse juste</p>
+                    </div>
+                    <div class="card-body">
+                        {# form_row(form.question, {'attr': {'hidden': 'hidden'}, 'label_attr': {'style': 'display: none;'}}) #}
+                        {{ form(form) }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

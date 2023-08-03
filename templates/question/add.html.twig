@@ -10,6 +10,7 @@
                     <h3 class="card-title">Ajouter question</h3>
                 </div>
                 <div class="card-body">
+                    {{ form_row(form.reponse, {'attr': {'hidden': 'hidden'}, 'label_attr': {'style': 'display: none;'}}) }}
                     {{ form(form) }}
                 </div>
             </div>
