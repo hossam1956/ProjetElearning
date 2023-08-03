@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -50,6 +52,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $photo;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Demandeformateur::class, mappedBy="user")
+     */
+    private $demandeformateurs;
+
+    public function __construct()
+    {
+        $this->demandeformateurs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -180,6 +192,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Demandeformateur>
+     */
+    public function getDemandeformateurs(): Collection
+    {
+        return $this->demandeformateurs;
+    }
+
+    public function addDemandeformateur(Demandeformateur $demandeformateur): self
+    {
+        if (!$this->demandeformateurs->contains($demandeformateur)) {
+            $this->demandeformateurs[] = $demandeformateur;
+            $demandeformateur->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandeformateur(Demandeformateur $demandeformateur): self
+    {
+        if ($this->demandeformateurs->removeElement($demandeformateur)) {
+            // set the owning side to null (unless already changed)
+            if ($demandeformateur->getUser() === $this) {
+                $demandeformateur->setUser(null);
+            }
+        }
 
         return $this;
     }

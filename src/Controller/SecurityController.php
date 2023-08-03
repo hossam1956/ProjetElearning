@@ -11,13 +11,20 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
+use App\Entity\Demandeformateur;
+use App\Repository\UserRepository;
+use App\Repository\DemandeformateurRepository;
+use Symfony\Component\Security\Core\Security;
 
 class SecurityController extends AbstractController
 {   private $passwordEncoder;
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->passwordEncoder=$passwordEncoder;
+        
     }
+   
+
     /**
      * @Route("/login", name="app_login")
      */
@@ -60,7 +67,7 @@ class SecurityController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
            $inputValueRole = $user->getRole();
             if($inputValueRole == true){
-                $user->setRole("formateur");
+                $user->setRole("userformateur");
             }
             else{
                 $user->setRole("user");
@@ -78,6 +85,59 @@ class SecurityController extends AbstractController
             'form' => $form->createView()
         ]);
         
+    }
+
+    /**
+     * @Route("/GestionUser",name="GestionUser")
+     */
+    public function GestionUser(UserRepository $userrepository,DemandeformateurRepository $demandeformateurrepository,Security $security)
+    {
+        $demande=$userrepository->findBy(['role'=>'userformateur']);
+        $entityManager = $this->getDoctrine()->getManager();
+        $demandeformateur = new Demandeformateur();
+        foreach ($demande as $user) {
+            $existingDemandeformateur = $demandeformateurrepository->findBy(['user' => $user]);
+            if(!$existingDemandeformateur){
+            $demandeformateur->setUser($user);
+            $demandeformateur->setEtat(0);
+            $entityManager->persist($demandeformateur);
+            }
+        }
+        
+        $entityManager->flush();
+        $demandesformateur = $demandeformateurrepository->findAll();
+        if($security->getUser()->getRole() == 'admin'){
+        return $this->render('GestionUser/demande.html.twig', [
+            'demandeformateur' => $demandesformateur
+        ]);
+        }
+        return $this->redirectToRoute('home'); 
+    }
+     /**
+     * @Route("/GestionUser/true/{iduser}",name="GestionUser_true")
+     */
+    public function GestionUsertrue(UserRepository $userrepository,DemandeformateurRepository $demandeformateurrepository,$iduser)
+    {
+        $user=$userrepository->findOneBy(['id'=>$iduser]);
+        $demandesformateur = $demandeformateurrepository->findOneBy(['user'=>$user]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $user->setRole('formateur');
+        $entityManager->remove($demandesformateur);
+        $entityManager->flush();
+        return $this->redirectToRoute('showformation'); 
+    }
+    /**
+     * @Route("/GestionUser/false/{iduser}",name="GestionUser_false")
+     */
+    public function GestionUserfalse(UserRepository $userrepository,DemandeformateurRepository $demandeformateurrepository,$iduser)
+    {
+        $user=$userrepository->findOneBy(['id'=>$iduser]);
+        $demandesformateur = $demandeformateurrepository->findOneBy(['user'=>$user]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $user->setRole('user');
+        $entityManager->remove($demandesformateur);
+        $entityManager->flush();
+        return $this->redirectToRoute('showformation'); 
     }
 
     /**
