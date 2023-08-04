@@ -30,7 +30,7 @@ class Question
     private $reponse;
 
     /**
-     * @ORM\ManyToOne(targetEntity=exercice::class, inversedBy="questions")
+     * @ORM\ManyToOne(targetEntity=Exercice::class, inversedBy="questions")
      */
     private $exercice;
 

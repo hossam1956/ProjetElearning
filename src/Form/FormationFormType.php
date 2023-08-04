@@ -20,7 +20,7 @@ class FormationFormType extends AbstractType
 
         $builder
             ->add('titre',TextType::class,["label"=>"Titre"])
-            ->add('Image', FileType::class, [
+            ->add('image', FileType::class, [
                 "label" => "image",
                 'required' => false,
             ])
