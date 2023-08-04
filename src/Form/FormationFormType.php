@@ -16,26 +16,25 @@ class FormationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        
+
 
         $builder
-            ->add('titre',TextType::class,["label"=>"Titre"])
-            ->add('Image', FileType::class, [
+            ->add('titre', TextType::class, ["label" => "Titre"])
+            ->add('image', FileType::class, [
                 "label" => "image",
                 'required' => false,
             ])
-            ->add('categorie',ChoiceType::class,[
-            'choices' => [
-                'dev web' => 'dev_web',
-                'programmation' => 'progmmation',
-                'IA' => 'IA',
-                'securite' => 'securite',
-                'base de donnees' => 'bd',
-            ],
-            'label' => 'Categorie'
-                ])
-            ->add('Enregistrer',SubmitType::class)
-        ;
+            ->add('categorie', ChoiceType::class, [
+                'choices' => [
+                    'dev web' => 'dev_web',
+                    'programmation' => 'progmmation',
+                    'IA' => 'IA',
+                    'securite' => 'securite',
+                    'base de donnees' => 'bd',
+                ],
+                'label' => 'Categorie'
+            ])
+            ->add('Enregistrer', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

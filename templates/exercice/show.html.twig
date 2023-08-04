@@ -2,95 +2,114 @@
 
 {% block title %}{{ exercice.titre }}{% endblock %}
 
-{% block body %}
-    <div class="container">
-        <div class="col-md-8 mx-auto">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        {{ exercice.titre }}
-                    </h3>
-                </div>
-                <div class="card-body">
-                    {% if exercice.questions is empty %}
-                        {# {{exercice.questions}} #}
-                        <div class="alert alert-warning" role="alert">
-                            You need to add some questions !
-                        </div>
-                    {% endif %}
-                    {# <div class="card-text">
-                        {{ exercice.body }}
-                    </div>
-                    <div class="card-text">
-                        {{ user }}
-                    </div> #}
-                    <ul>
-                        <td>
-                            <a href="{{ path('app_exercice.edit', {id : exercice.id}) }}" class="btn btn-warning">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                                Edit exercice title
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ path('app_question', {exercice_id : exercice.id}) }}" class="btn btn-primary">
-                                <i class="fa-regular fa-eye"></i>
-                                View questions
-                            </a>
-                        </td>
-                        <td>
-                            <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                <i class="fa-solid fa-trash"></i>
-                                Delete Exercice
-                            </button>
-                        </td>
-                        <td>
-                            <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
-                                <i class="fa-solid fa-book"></i>
-                                Take exercise 
-                            </a>
-                        </td>
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+{% endblock %}
 
-                        {# <td><a href="{{ path('app_exercice.delete', {id : exercice.id}) }}" class="btn btn-danger">
-                                <i class="fa-solid fa-trash"></i>
-                                Delete Exercice
-                            </a>
-                        </td> #}
-                    </ul>
+{% block body %}
+<div class="body">
+    <div class="sidebar row my-5">
+        <div class="d-flex flex-column flex-shrink-0 p-3" style="width: 280px;">
+            <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">{{ exercice.titre }}</span>
+            </a>
+            <ul class="nav nav-pills flex-column mb-auto">
+                {% for question in exercice.questions %}
+                    <li class="nav-item">
+                        <a href="
+                            {{ path('app_question.show', {exercice_id : exercice.id, id : question.id}) }}
+                        " class="nav-link" aria-current="page">
+                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                            {{question.question}}
+                        </a>
+                        <ul class="nav nav-pills flex-column mb-auto">
+                            {% for choix in question.getChoixReponses() %}
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page">
+                                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                                        {{choix.choix}}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row my-5">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            {{ exercice.titre }}
+                        </h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        {% if exercice.questions is empty %}
+                            <div class="alert alert-warning" role="alert">
+                                Vous devez ajouter au moins une question !
+                            </div>
+                        {% endif %}
+                        <ul>
+                            <div class="actions">
+                                <td>
+                                    <a href="{{ path('app_exercice.edit', {id : exercice.id}) }}" class="btn btn-warning">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        Modifier titre
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_question', {exercice_id : exercice.id}) }}" class="btn btn-primary">
+                                        <i class="fa-regular fa-eye"></i>
+                                        Afficher questions
+                                    </a>
+                                </td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="fa-solid fa-trash"></i>
+                                        Supprimer exercice
+                                    </button>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
+                                        <i class="fa-solid fa-book"></i>
+                                        Mettre en pratique
+                                    </a>
+                                </td>
+                            </div>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
 
-        <!-- Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="deleteModalLabel">Do you want to delete the exercise ?</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-danger">The exercise as well as all its questions and choices will be deleted !</p>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <a href="{{ path('app_exercice.delete', {id : exercice.id}) }}" class="btn btn-danger">
-                            Confirm
-                        </a>
+            <!-- Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="deleteModalLabel">Êtes-vous sûr(e) de vouloir supprimer cet exercice ?</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-danger">L'exercice ainsi que toutes ses questions et ses choix seront supprimés !</p>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <a href="{{ path('app_exercice.delete', {id : exercice.id}) }}" class="btn btn-danger">
+                                Confirmer
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>        
 {% endblock %}
 
-
-{# {% if is_granted('ROLE_USER') %}
-    {% if task.user.id == app.user.id %}
-        <a href="{{ path('task_edit', {id : task.id}) }}" class="btn btn-warning">
-            <i class="fa-solid fa-pen-to-square"></i>
-        </a>
-        <a href="{{ path('task_delete', {id : task.id}) }}" class="btn btn-danger">
-            <i class="fa-solid fa-trash"></i>
-        </a>
-    {% endif %}
-{% endif %} #}
