@@ -32,7 +32,8 @@ class RessourceController extends AbstractController
      */
     public function addressource(Request $request)
 
-    {   
+    {   $user=$this->getUser();
+        if($user){
         $ressource = new Ressource();
         $form = $this->createForm(RessourceType::class, $ressource);
         $form->handleRequest($request);
@@ -55,6 +56,10 @@ class RessourceController extends AbstractController
         return $this->render('ressource/index.html.twig', [
             'form' => $form->createView()
         ]);
+        }
+        else{
+            return $this->redirectToRoute('home'); 
+        }
     }
 
 
@@ -64,7 +69,8 @@ class RessourceController extends AbstractController
      * @Route("/edit/{idsection}/ressource/{id}", name="editressource")
      */
     public function editressource(Ressource $ressource,Request $request)
-    {   
+    {   $user=$this->getUser();
+        if($user){
         $ressource->setLien(null);
         $form = $this->createForm(RessourceType::class, $ressource);
         $form->handleRequest($request);
@@ -79,6 +85,10 @@ class RessourceController extends AbstractController
         return $this->render('ressource/edit.html.twig', [
             'form' => $form->createView()
         ]);
+        }
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 
     
@@ -87,12 +97,17 @@ class RessourceController extends AbstractController
      * @Route("/delete/{idsection}/ressource/{id}", name="deleteressource")
      */
     public function deleteressource(Ressource $ressource,Request $request,RessourceRepository $ressourcerepository,$id,$idsection)
-    {
+    {       $user=$this->getUser();
+            if($user){
             $ressource = $ressourcerepository->findOneBy(['id' => $id]);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($ressource);
             $entityManager->flush();
-            return $this->redirectToRoute('showformation'); 
+            return $this->redirectToRoute('showformation');
+            }
+            else{
+                return $this->redirectToRoute('home'); 
+            }
     }
 
 
@@ -105,12 +120,18 @@ class RessourceController extends AbstractController
      */
 
      public function showressource(RessourceRepository $ressourceRepository,ExerciceRepository $exerciceRepository,$idsection)
-    {   $ressource = $ressourceRepository->findBy(['idsection' => $idsection]);
+    {   $user=$this->getUser();
+        if($user){
+        $ressource = $ressourceRepository->findBy(['idsection' => $idsection]);
         $exercices = $this->exerciceRepository->findBy(['section' => $idsection]);
         return $this->render('ressource/showressource.html.twig', [
             'ressources' => $ressource,
             "exercices" => $exercices,
         ]);
+        }
+        else{
+            return $this->redirectToRoute('home');  
+        }
     }
 
     /**
@@ -118,7 +139,8 @@ class RessourceController extends AbstractController
      */
     public function downloaddoc(RessourceRepository $ressourceRepository,$id)
     {   
-        
+        $user=$this->getUser();
+        if($user){
         $ressource = $ressourceRepository->find($id);
         $ressourceTitre=$ressource->getTitre();
         $ressourceType=$ressource->getType();
@@ -128,6 +150,10 @@ class RessourceController extends AbstractController
         $response->headers->set('Content-Type',$ressourceType);
         $response->headers->set('Content-Disposition', "attachment; filename=$ressourceTitre");
         return $response;
+        }
+        else{
+            return $this->redirectToRoute('home');  
+        }
         
     }
 }

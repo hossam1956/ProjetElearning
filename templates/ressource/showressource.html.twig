@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Hello ressource!{% endblock %}
-{% block stylesheets %} {{parent()}} {% endblock %}
+{% block stylesheets %} {{parent()}} 
+{% endblock %}
 {% block javascripts %} {{parent()}} {% endblock %}
 {% block navabar %}
 {{parent()}}
@@ -10,7 +11,7 @@
 {% if app.user and app.user.getRole() == 'formateur' %} 
 <a href="{{path('addressource')}}" class="btn btn-light mt-4 ms-4 " style="width: 200px;display: inline;"><i class="fa fa-plus" > Ajouter une ressource</i></a>
 {% endif %}
-<table class="table">
+<table class="table ms-4  me-4">
   <thead>
     <tr>
       <th scope="col">Type</th>
@@ -37,8 +38,9 @@
     {% endfor %}
   </tbody>
 </table>
-<table>
-<h1>Ressources</h1>
+<table class="table ms-4  me-4">
+<h1>Exercices
+</h1>
   <tbody>
     {% for exercice in exercices %}
     <tr>

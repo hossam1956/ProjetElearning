@@ -27,11 +27,15 @@ class ExerciceController extends AbstractController
      * @Route("/exercice", name="app_exercice")
      */
     public function index()
-    {
+    {   $user=$this->getUser();
+        if($user){
         $exercices = $this->exerciceRepository->findAll();
         return $this->render('exercice/index.html.twig', [
             "exercices" => $exercices,
-        ]);
+        ]);}
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 
     /**
@@ -43,10 +47,14 @@ class ExerciceController extends AbstractController
         if (!$exercice) {
             throw $this->createNotFoundException('Aucun exercice trouvé pour l\'id ' . $id);
         }
-
+        $user=$this->getUser();
+        if($user){
         return $this->render('exercice/show.html.twig', [
             "exercice" => $exercice,
-        ]);
+        ]);}
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 
     /**
@@ -68,10 +76,14 @@ class ExerciceController extends AbstractController
 
             return $this->redirectToRoute('app_exercice');
         }
-
+        $user=$this->getUser();
+        if($user){
         return $this->render('exercice/add.html.twig', [
             'form' => $form->createView(),
-        ]);
+        ]);}
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 
     /**
@@ -91,17 +103,22 @@ class ExerciceController extends AbstractController
 
             return $this->redirectToRoute('app_exercice');
         }
-
+        $user=$this->getUser();
+        if($user){
         return $this->render('exercice/edit.html.twig', [
             'form' => $form->createView(),
-        ]);
+        ]);}
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 
     /**
      * @Route("/exercice/delete/{id}", name="app_exercice.delete")
      */
     public function deleteExercice(Exercice $exercice)
-    {
+    {    $user=$this->getUser();
+        if($user){
         $entityManager = $this->getDoctrine()->getManager();
         $questions = $exercice->getQuestions();
 
@@ -116,8 +133,14 @@ class ExerciceController extends AbstractController
         $entityManager->remove($exercice);
         $entityManager->flush();
         $this->flashMessage->add("success", "L'exercice est bien supprimé !");
-
-        return $this->redirectToRoute('app_exercice');
+        
+        
+            return $this->redirectToRoute('app_exercice');
+    }
+    else{
+        return $this->redirectToRoute('home');
+    }  
+        
     }
 
     /**

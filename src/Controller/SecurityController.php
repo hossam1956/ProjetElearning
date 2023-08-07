@@ -91,7 +91,8 @@ class SecurityController extends AbstractController
      * @Route("/GestionUser",name="GestionUser")
      */
     public function GestionUser(UserRepository $userrepository,DemandeformateurRepository $demandeformateurrepository,Security $security)
-    {
+    {   $user=$this->getUser();
+        if($user){
         $demande=$userrepository->findBy(['role'=>'userformateur']);
         $entityManager = $this->getDoctrine()->getManager();
         $demandeformateur = new Demandeformateur();
@@ -112,6 +113,10 @@ class SecurityController extends AbstractController
         ]);
         }
         return $this->redirectToRoute('home'); 
+        }
+        else{
+            return $this->redirectToRoute('home'); 
+        }
     }
      /**
      * @Route("/GestionUser/true/{iduser}",name="GestionUser_true")
@@ -139,6 +144,48 @@ class SecurityController extends AbstractController
         $entityManager->flush();
         return $this->redirectToRoute('showformation'); 
     }
+    /**
+     * @Route("/GestionUser2",name="GestionUser2")
+     */
+    public function GestionUser2(UserRepository $userrepository,Security $security)
+    {   $user=$this->getUser();
+        if($user){
+        $users=$userrepository->findAll();
+        if($security->getUser()->getRole() == 'admin'){
+        return $this->render('GestionUser/user.html.twig', [
+            'users' => $users
+        ]);
+        }
+        return $this->redirectToRoute('home'); 
+        }
+        else{
+            return $this->redirectToRoute('home'); 
+        }
+
+    }
+    /**
+     * @Route("/GestionUser2/false/{iduser}",name="GestionUser_false2")
+     */
+    public function GestionUserfalse2(UserRepository $userrepository,$iduser)
+    {
+        $user=$userrepository->findOneBy(['id'=>$iduser]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($user);
+        $entityManager->flush();
+        return $this->redirectToRoute('showformation'); 
+    }
+
+    /**
+     * @Route("/profile/{iduser}",name="profile")
+     */
+    public function profile(UserRepository $userrepository,Security $security,$iduser)
+    {   $user=$userrepository->findOneBy(['id'=>$iduser]);
+        return $this->render('GestionUser/profile.html.twig',[
+            'user'=>$user
+        ]);
+        
+    }
+
 
     /**
      * @Route("/logout", name="app_logout")

@@ -18,7 +18,8 @@ class SectionController extends AbstractController
      * @Route("/add/section", name="addsection")
      */
     public function addsection(Request $request)
-    {
+    {   $user=$this->getUser();
+        if($user){
         $section = new Section();
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
@@ -33,6 +34,10 @@ class SectionController extends AbstractController
         return $this->render('section/index.html.twig', [
             'form' => $form->createView()
         ]);
+        }
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 
     /**
@@ -40,7 +45,8 @@ class SectionController extends AbstractController
      */
     public function editsection(Section $section,Request $request)
     {
-        
+        $user=$this->getUser();
+        if($user){
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -54,13 +60,18 @@ class SectionController extends AbstractController
         return $this->render('section/edit.html.twig', [
             'form' => $form->createView()
         ]);
+        }
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 
     /**
      * @Route("/delete/section/{id}", name="deletesection")
      */
     public function deletesection(Section $section,Request $request,RessourceRepository $ressourcerepository)
-    {
+    {       $user=$this->getUser();
+            if($user){
             $idsection=$section->getId();
             $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
             $entityManager = $this->getDoctrine()->getManager();
@@ -73,16 +84,26 @@ class SectionController extends AbstractController
             $entityManager->remove($section);
             $entityManager->flush();
             return $this->redirectToRoute('showformation'); 
+            }
+            else{
+                return $this->redirectToRoute('home'); 
+            }
     }
         /**
      * @Route("/show/{idformation}/section", name="showsection")
      */
 
      public function showsection(SectionRepository $sectionrepository,$idformation)
-    {    $section = $sectionrepository->findBy(['idformation' => $idformation]);
+    {   $user=$this->getUser();
+        if($user){ 
+        $section = $sectionrepository->findBy(['idformation' => $idformation]);
         
         return $this->render('section/showsection.html.twig', [
             'sections' => $section
         ]);
+        }
+        else{
+            return $this->redirectToRoute('home');
+        }
     }
 }

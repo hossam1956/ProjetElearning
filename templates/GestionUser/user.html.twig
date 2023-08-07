@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello User!{% endblock %}
+{% block stylesheets %} {{parent()}} {% endblock %}
+{% block javascripts %} {{parent()}} {% endblock %}
+{% block navabar %}
+{{parent()}}
+{% endblock %}
+{% block body %}
+<table class="table mt-4 ms-4 me-4">
+  <thead>
+    <tr>
+      <th scope="col">Id Utilisateur</th>
+      <th scope="col">role</th>
+      <th scope="col">nom</th>
+      <th scope="col">prenom</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+    
+      <td>{{user.id}}</td>
+      <td>{{user.role}}</td>
+      <td>{{user.nom}}</td>
+      <td>{{user.prenom}}</td>
+      <td>
+        {% if user.role != 'userformateur' %}
+        <a href="{{path('profile',{'iduser':user.id})}}" class="btn btn-light"><i class="fa fa-eye"></i></a>
+        <a href="{{path('GestionUser_false2',{'iduser':user.id})}}" class="btn btn-outline-danger"><i class="fa-solid fa-xmark"></i></a>
+        {% else %}
+        <h6>ce compte a déposé<br> une demande</h6>
+        {% endif %}
+    </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
