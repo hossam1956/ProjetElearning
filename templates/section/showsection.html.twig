@@ -28,7 +28,6 @@
       <td>{{section.description}}</td>
       <td>
         <a href="{{path('showressource',{'idsection': section.id})}}" class="btn btn-light"><i class="fa fa-eye"></i></a>
-        <a href="#" class="btn btn-light"><i class="fa-solid fa-check"></i></a>
         {% if app.user and app.user.getRole() == 'formateur' %} 
         <a href="{{path('editsection',{'id': section.id})}}" class="btn btn-warning " ><i class="fa-solid fa-pen-to-square"></i></a>
         <a href="{{path('deletesection',{'id': section.id})}}" class="btn btn-danger " ><i class="fa-solid fa-trash"></i></a>

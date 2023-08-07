@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello User!{% endblock %}
+{% block stylesheets %} {{parent()}} {% endblock %}
+{% block javascripts %} {{parent()}} {% endblock %}
+{% block navabar %}
+{{parent()}}
+{% endblock %}
+{% block body %}
+<table class="table mt-4 ms-4 me-4">
+  <thead>
+    <tr>
+      <th scope="col">Id Utilisateur</th>
+      <th scope="col">nom</th>
+      <th scope="col">prenom</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for users in user %}
+    <tr>
+    
+      <td>{{users.id}}</td>
+      <td>{{users.nom}}</td>
+      <td>{{users.prenom}}</td>
+      <td> 
+        <a href="{{path('app_inscription_formation_true',{ 'idformation':app.request.get('idformation') ,'idformateur':app.user.getId(),'iduser':users.id})}}" class="btn btn-outline-success" title="Inscrire ce utilisateur dans cette formation"><i class="fa-solid fa-right-to-bracket"></i></a>
+    </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

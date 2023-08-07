@@ -58,9 +58,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $demandeformateurs;
 
+    /**
+     * @ORM\OneToMany(targetEntity=InscriptionFormation::class, mappedBy="IdFormateur")
+     */
+    private $inscriptionFormations;
+
     public function __construct()
     {
         $this->demandeformateurs = new ArrayCollection();
+        $this->inscriptionFormations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -220,6 +226,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($demandeformateur->getUser() === $this) {
                 $demandeformateur->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InscriptionFormation>
+     */
+    public function getInscriptionFormations(): Collection
+    {
+        return $this->inscriptionFormations;
+    }
+
+    public function addInscriptionFormation(InscriptionFormation $inscriptionFormation): self
+    {
+        if (!$this->inscriptionFormations->contains($inscriptionFormation)) {
+            $this->inscriptionFormations[] = $inscriptionFormation;
+            $inscriptionFormation->setIdFormateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscriptionFormation(InscriptionFormation $inscriptionFormation): self
+    {
+        if ($this->inscriptionFormations->removeElement($inscriptionFormation)) {
+            // set the owning side to null (unless already changed)
+            if ($inscriptionFormation->getIdFormateur() === $this) {
+                $inscriptionFormation->setIdFormateur(null);
             }
         }
 

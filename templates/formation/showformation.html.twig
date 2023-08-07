@@ -29,14 +29,15 @@
     {% else %}
         <ul>
             {% for formations in formation %}
-            <div class="card ms-4" style="width: 200px">
+            <div class="card ms-4" style="width: 220px">
               <img src="{{asset('/uploads/'~formations.image)}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
               <div class="card-body">
                 <h5 class="card-title" >{{formations.titre}}</h5>
-                <a href="{{path('showsection',{'idformation': formations.id})}}" class="btn btn-primary">Entrer</a>
+                <a href="{{path('showsection',{'idformation': formations.id})}}" class="btn btn-primary" title="Entrer"><i class="fa-solid fa-right-to-bracket"></i></a>
                 {% if app.user and app.user.getRole() == 'formateur' %}
-                <a href="{{path('editformation',{ 'id': formations.id})}}" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                <a href="{{path('deleteformation',{ 'id': formations.id})}}" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                <a href="{{path('editformation',{ 'id': formations.id})}}" class="btn btn-warning" title="Modifier"><i class="fa-solid fa-pen-to-square"></i></a>
+                <a href="{{path('deleteformation',{ 'id': formations.id})}}" class="btn btn-danger" title="Supprimer"><i class="fa-solid fa-trash"></i></a>
+                <a href="{{path('app_inscription_formation',{ 'idformation': formations.id,'idformateur':app.user.getId()})}}" title="Ajouter un utilisateur a cette formation" class="btn btn-light"><i class="fa-solid fa-user-plus"></i></a>
                 {% endif %}
               </div>
             </div>
