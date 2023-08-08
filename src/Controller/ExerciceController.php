@@ -3,24 +3,31 @@
 namespace App\Controller;
 
 use App\Entity\Exercice;
+use App\Entity\ExerciceUser;
 use App\Form\ExerciceType;
 use App\Form\PracticeType;
 use App\Repository\ExerciceRepository;
+use App\Repository\ExerciceUserRepository;
+use App\Repository\FormationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\Avancement;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ExerciceController extends AbstractController
 {
     private $exerciceRepository;
     private $flashMessage;
+    private $entityManager;
 
-    public function __construct(ExerciceRepository $exerciceRepository, FlashBagInterface $flashMessage)
+    public function __construct(ExerciceRepository $exerciceRepository, FlashBagInterface $flashMessage, EntityManagerInterface $entityManager)
     {
         $this->exerciceRepository = $exerciceRepository;
         $this->flashMessage = $flashMessage;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -121,10 +128,21 @@ class ExerciceController extends AbstractController
     }
 
     /**
-     * @Route("/exercice/practice/{exercice_id}", name="app_exercice.practice")
+     * @Route("/exercice/practice/{exercice_id}/{flag?0}", name="app_exercice.practice")
      */
-    public function PracticeExercice(Request $request, $exercice_id, SessionInterface $session)
+    public function PracticeExercice(Request $request, SessionInterface $session, FormationRepository $formationRepository, ExerciceUserRepository $exerciceUserRepository, Avancement $avancement, $exercice_id, $flag)
     {
+        $exercice_user = $exerciceUserRepository->findOneByExerciceAndUser($exercice_id,  $this->getUser()->getId());
+        if ($exercice_user && $flag == 0) {
+            return $this->redirectToRoute(
+                'app_exercice.result',
+                [
+                    'score' => $exercice_user->getScore(),
+                    'exercice_id' => $exercice_id,
+                ]
+            );
+        }
+
         $form = $this->createForm(PracticeType::class, null, ['exercice_id' => $exercice_id]);
         $form->handleRequest($request);
 
@@ -145,6 +163,33 @@ class ExerciceController extends AbstractController
                 }
                 $i++;
             }
+
+            $exerciceUserRepository = $this->entityManager->getRepository(ExerciceUser::class);
+
+            // $exercice_user = $exerciceUserRepository->findOneBy([
+            //     'exerciceid' => $exercice_id,
+            //     'userid' => $this->getUser()->getId()
+            // ]);
+
+            if (!$exercice_user) {
+                $exercice_user = new ExerciceUser();
+                $exercice_user->setexerciceid($exercice_id);
+                $exercice_user->setUserid($this->getUser()->getId());
+            }
+
+            if ($exercice_user) {
+                if ($score < $exercice_user->getScore())
+                    $score = $exercice_user->getScore();
+            }
+
+            $exercice_user->setScore($score);
+
+            $this->entityManager->persist($exercice_user);
+            $this->entityManager->flush();
+
+
+            $avancement_value = $avancement->GetUserAvancement($formationRepository->find($exercice->getSection()->getIdformation()), $this->getUser()->getId());
+            $avancement->updateUserAvancement($formationRepository->find($exercice->getSection()->getIdformation())->getId(), $this->getUser()->getId(), $avancement_value);
 
             return $this->redirectToRoute(
                 'app_exercice.result',

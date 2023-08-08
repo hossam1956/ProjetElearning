@@ -26,6 +26,17 @@
 {% block body %}
     <div class="container">
     <h1>Votre score est : {{ score }} %</h1>
+    
+    {% if score >= 50 %}
+        <div class="alert alert-success">Vous avez réussit l'exercice et votre avancement est bien enregistré !</div>
+    {% else %}
+        <div class="alert alert-danger">
+            Votre score est inférieur à 50%, vous n'avez pas réussit l'exercice ! Vous pouvez le refaire à travers 
+            <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id, flag: 1}) }}">
+                ce lien
+            </a>
+        </div>
+    {% endif %}
 
     {% set i = 1 %}
     {% for question in exercice.questions %}

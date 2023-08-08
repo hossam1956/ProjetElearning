@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App\Entity\Section;
 use App\Entity\Formation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,6 +13,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SectionRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\FormationRepository;
+use App\Service\Avancement;
+
 class SectionController extends AbstractController
 {
     /**
@@ -23,12 +26,12 @@ class SectionController extends AbstractController
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $section=$form->getData();
+            $section = $form->getData();
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($section);
             $entityManager->flush();
 
-            return $this->redirectToRoute('showformation'); 
+            return $this->redirectToRoute('showformation');
         }
         return $this->render('section/index.html.twig', [
             'form' => $form->createView()
@@ -38,18 +41,18 @@ class SectionController extends AbstractController
     /**
      * @Route("/edit/section/{id}", name="editsection")
      */
-    public function editsection(Section $section,Request $request)
+    public function editsection(Section $section, Request $request)
     {
-        
+
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $section=$form->getData();
+            $section = $form->getData();
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($section);
             $entityManager->flush();
 
-            return $this->redirectToRoute('showformation'); 
+            return $this->redirectToRoute('showformation');
         }
         return $this->render('section/edit.html.twig', [
             'form' => $form->createView()
@@ -59,30 +62,33 @@ class SectionController extends AbstractController
     /**
      * @Route("/delete/section/{id}", name="deletesection")
      */
-    public function deletesection(Section $section,Request $request,RessourceRepository $ressourcerepository)
+    public function deletesection(Section $section, Request $request, RessourceRepository $ressourcerepository)
     {
-            $idsection=$section->getId();
-            $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
-            $entityManager = $this->getDoctrine()->getManager();
-            while ($ressourcesection) {
-                    $entityManager->remove($ressourcesection);
-                    $entityManager->flush();
-                    $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
-
-            }
-            $entityManager->remove($section);
+        $idsection = $section->getId();
+        $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
+        $entityManager = $this->getDoctrine()->getManager();
+        while ($ressourcesection) {
+            $entityManager->remove($ressourcesection);
             $entityManager->flush();
-            return $this->redirectToRoute('showformation'); 
+            $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
+        }
+        $entityManager->remove($section);
+        $entityManager->flush();
+        return $this->redirectToRoute('showformation');
     }
-        /**
+
+    /**
      * @Route("/show/{idformation}/section", name="showsection")
      */
+    public function showsection(SectionRepository $sectionrepository, $idformation, Avancement $avancement)
+    {
+        $section = $sectionrepository->findBy(['idformation' => $idformation]);
 
-     public function showsection(SectionRepository $sectionrepository,$idformation)
-    {    $section = $sectionrepository->findBy(['idformation' => $idformation]);
-        
+        $avancement_value = $avancement->GetUserAvancement($idformation, $this->getUser()->getId());
+
         return $this->render('section/showsection.html.twig', [
-            'sections' => $section
+            'sections' => $section,
+            'avancement' => $avancement_value
         ]);
     }
 }

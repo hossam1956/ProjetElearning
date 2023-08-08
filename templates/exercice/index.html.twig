@@ -28,11 +28,12 @@
                                     <td>
                                         <div class="actions">
                                             <a href="{{ path('app_exercice.show', {id : exercice.id}) }}" class="btn btn-primary">
-                                                Afficher exercice <i class="fa-regular fa-eye"></i>
+                                                Afficher exercice 
+                                                <i class="fa-regular fa-eye"></i>
                                             </a>
                                             <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
-                                                <i class="fa-solid fa-book"></i>
                                                 Mettre en pratique
+                                                <i class="fa-solid fa-book"></i>
                                             </a>
                                         </div>
                                         {% if exercice.questions is empty %}

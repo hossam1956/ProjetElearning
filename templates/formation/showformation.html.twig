@@ -27,10 +27,18 @@
     {% if formation is empty %}
         <p class="container ms-5" style="font-size: 40px;">No results found.</p>
     {% else %}
+
         <ul>
+        {% set i = 0 %}
+
             {% for formations in formation %}
             <div class="card ms-4" style="width: 200px">
-              <img src="{{asset('/uploads/'~formations.image)}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
+              {% if asset('/uploads/'~formations.image) %}
+                <img src="{{asset('/uploads/'~formations.image)}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
+
+              {% else %}
+                <img src="{{asset('assets/formation.png')}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
+              {% endif %}
               <div class="card-body">
                 <h5 class="card-title" >{{formations.titre}}</h5>
                 <a href="{{path('showsection',{'idformation': formations.id})}}" class="btn btn-primary">Entrer</a>
@@ -39,7 +47,18 @@
                 <a href="{{path('deleteformation',{ 'id': formations.id})}}" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
                 {% endif %}
               </div>
+
+            <hr>
+            <span style="margin: auto;">{{avancement_values[i]}}%</span>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: {{ avancement_values[i] }}%" aria-valuenow="{{ avancement_values[i] }}" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+            <hr>
+
+            <p class="text text-success">Vous avez terminer la formation !</p>
+
+            </div>
+            {% set i = i + 1 %}
             {% endfor %}
         </ul>
     {% endif %}
