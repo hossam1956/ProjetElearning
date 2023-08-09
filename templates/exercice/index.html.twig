@@ -2,6 +2,15 @@
 
 {% block title %}Liste exercices{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+    <style>
+        .action, .action:hover {
+        color: #fff;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div class="container">
         <div class="row my-5">
@@ -27,11 +36,11 @@
                                     <td>{{ exercice.titre }}</td>
                                     <td>
                                         <div class="actions">
-                                            <a href="{{ path('app_exercice.show', {id : exercice.id}) }}" class="btn btn-primary">
+                                            <a href="{{ path('app_exercice.show', {id : exercice.id}) }}" class="btn btn-primary action">
                                                 Afficher exercice 
                                                 <i class="fa-regular fa-eye"></i>
                                             </a>
-                                            <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
+                                            <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info action">
                                                 Mettre en pratique
                                                 <i class="fa-solid fa-book"></i>
                                             </a>

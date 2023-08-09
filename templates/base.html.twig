@@ -39,9 +39,11 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{{path('showformation')}}">Formations</a>
                   </li>
+                  {% if app.user.getRole() == 'formateur' %}
                   <li class="nav-item">
                     <a class="nav-link" href="{{path('app_exercice')}}">Exercices</a>
                   </li>
+                  {% endif %}
                   <li class="nav-item">
                     <a class="nav-link" href="{{path('profile',{'iduser':app.user.id})}}">Profile</a>
                   </li>

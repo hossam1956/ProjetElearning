@@ -1,13 +1,20 @@
-{% extends 'base.html.twig' %}
+{% extends "base.html.twig" %}
 
-{% block title %}Hello section!{% endblock %}
-{% block stylesheets %} {{parent()}} {% endblock %}
-{% block javascripts %} {{parent()}} {% endblock %}
-{% block navabar %}
-{{parent()}}
-{% endblock %}
+{% block title %}Modifier section{% endblock %}
+
 {% block body %}
-<div class="ms-4 me-4">
-{{ form(form) }}
-</div>
+<br>
+    <div class="container">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Modifier section</h3>
+                </div>
+                <div class="card-body">
+                    {{ form(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+<br>
 {% endblock %}

@@ -13,6 +13,7 @@ use App\Repository\SectionRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\FormationRepository;
 use App\Service\Avancement;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class SectionController extends AbstractController
 {
@@ -73,26 +74,35 @@ class SectionController extends AbstractController
     /**
      * @Route("/delete/section/{id}", name="deletesection")
      */
-    public function deletesection(Section $section,Request $request,RessourceRepository $ressourcerepository)
-    {       $user=$this->getUser();
-             $role=$user->getRole();
-            if($user && $role == "formateur"){
-                $idsection=$section->getId();
-                $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
-                $entityManager = $this->getDoctrine()->getManager();
-                while ($ressourcesection) {
-                        $entityManager->remove($ressourcesection);
-                        $entityManager->flush();
-                        $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
+    public function deletesection(Section $section, Request $request, RessourceRepository $ressourcerepository, FlashBagInterface $flashMessage)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $ressources = $ressourcerepository->findRessourcesBySectionId($section->getId());
 
+        foreach ($ressources as $ressource) {
+            $entityManager->remove($ressource);
+        }
+
+        $exercices = $section->getExercices();
+        foreach ($exercices as $exercice) {
+            $questions = $exercice->getQuestions();
+            foreach ($questions as $question) {
+                $choix = $question->getChoixReponses();
+                foreach ($choix as $choice) {
+                    $entityManager->remove($choice);
                 }
-                $entityManager->remove($section);
-                $entityManager->flush();
-                return $this->redirectToRoute('showformation'); 
+                $entityManager->remove($question);
             }
-            else{
-                return $this->redirectToRoute('home'); 
-            }
+
+            $entityManager->remove($exercice);
+        }
+
+        $entityManager->remove($section);
+
+        $entityManager->flush();
+        $flashMessage->add("success", "La section est bien supprimée !");
+
+        return $this->redirectToRoute('showformation');
     }
         /**
      * @Route("/show/{idformation}/section", name="showsection")

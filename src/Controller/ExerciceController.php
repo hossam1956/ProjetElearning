@@ -232,16 +232,21 @@ class ExerciceController extends AbstractController
     /**
      * @Route("/exercice/{exercice_id}/resultat/{score}", name="app_exercice.result")
      */
-    public function result($score, $exercice_id)
+    public function result($score, $exercice_id, Avancement $avancement, FormationRepository $formationRepository)
     {
         $exercice = $this->exerciceRepository->find($exercice_id);
+
+        $avancement_value = $avancement->GetUserAvancement($formationRepository->find($exercice->getSection()->getIdformation()), $this->getUser()->getId());
 
         return $this->render(
             'exercice/result.html.twig',
             [
                 'score' => $score,
                 'exercice' => $exercice,
+                'avancement' => $avancement_value,
+                'formation_id' => $formationRepository->find($exercice->getSection()->getIdformation())
             ]
         );
     }
+
 }

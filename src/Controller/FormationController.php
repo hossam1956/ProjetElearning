@@ -116,7 +116,7 @@ class FormationController extends AbstractController
 
             }
             //----inscription
-            while ($inscriptionformations) {
+            if ($inscriptionformations) {
                     foreach($inscriptionformations as $inscriptionformation){
                         $entityManager->remove($inscriptionformation);
                         $entityManager->flush();
@@ -183,16 +183,22 @@ class FormationController extends AbstractController
     /**
      * @Route("/search", name="search_form")
      */
-    public function searchForm(Request $request)
+    public function searchForm(Request $request,Avancement $avancement)
     {   
 
         $query = $request->query->get('query');
-        
+
         $formations = $this->getDoctrine()->getRepository(Formation::class)->findByTitre($query);
+
+        $avancement_values = [];
+        foreach ($formations as $formation) {
+            array_push($avancement_values, $avancement->GetUserAvancement($formation->getId(), $this->getUser()->getId()));
+        }
 
         return $this->render('formation/showformation.html.twig', [
             'formation' => $formations,
             'query' => $query,
+            'avancement_values' => $avancement_values
         ]);
         
 

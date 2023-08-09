@@ -24,16 +24,16 @@ class FormationFormType extends AbstractType
                 "label" => "image",
                 'required' => false,
             ])
-            ->add('categorie',ChoiceType::class,[
-            'choices' => [
-                'dev web' => 'dev_web',
-                'programmation' => 'progmmation',
-                'IA' => 'IA',
-                'securite' => 'securite',
-                'base de donnees' => 'bd',
-            ],
-            'label' => 'Categorie'
-                ])
+            ->add('categorie', ChoiceType::class, [
+                'choices' => [
+                    'Développement Web' => 'dev_web',
+                    'Programmation' => 'progmmation',
+                    'IA' => 'IA',
+                    'Sécurité' => 'securite',
+                    'Base de données' => 'bd',
+                ],
+                'label' => 'Categorie'
+            ])
             ->add('Enregistrer',SubmitType::class)
         ;
     }
