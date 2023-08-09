@@ -10,7 +10,15 @@
 {% if app.user and app.user.getRole() == 'formateur' %} 
 <a href="{{path('addsection')}}" class="btn btn-light mt-4 ms-4 " style="width: 200px;display: inline;"><i class="fa fa-plus" > Ajouter une Section</i></a>
 {% endif %}
-<table class="table ms-4  me-4">
+
+<br>
+<h3>Avancement total: {{ avancement }}%</h3>
+<div class="progress">
+  <div class="progress-bar" role="progressbar" style="width: {{ avancement }}%" aria-valuenow="{{ avancement }}" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<br>
+
+<table class="table">
     
   <thead>
     <tr>

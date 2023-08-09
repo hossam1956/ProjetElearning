@@ -27,20 +27,39 @@
     {% if formation is empty %}
         <p class="container ms-5" style="font-size: 40px;">No results found.</p>
     {% else %}
+
         <ul>
+        {% set i = 0 %}
+
             {% for formations in formation %}
-            <div class="card ms-4" style="width: 220px">
-              <img src="{{asset('/uploads/'~formations.image)}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
+            <div class="card ms-4" style="width: 200px">
+              {% if asset('/uploads/'~formations.image) %}
+                <img src="{{asset('/uploads/'~formations.image)}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
+
+              {% else %}
+                <img src="{{asset('assets/formation.png')}}" class="card-img-top" alt="..." style="width: 200px;height: 200px;">
+              {% endif %}
               <div class="card-body">
                 <h5 class="card-title" >{{formations.titre}}</h5>
                 <a href="{{path('showsection',{'idformation': formations.id})}}" class="btn btn-primary" title="Entrer"><i class="fa-solid fa-right-to-bracket"></i></a>
                 {% if app.user and app.user.getRole() == 'formateur' %}
-                <a href="{{path('editformation',{ 'id': formations.id})}}" class="btn btn-warning" title="Modifier"><i class="fa-solid fa-pen-to-square"></i></a>
-                <a href="{{path('deleteformation',{ 'id': formations.id})}}" class="btn btn-danger" title="Supprimer"><i class="fa-solid fa-trash"></i></a>
+                <a href="{{path('editformation',{ 'id': formations.id})}}" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                <a href="{{path('deleteformation',{ 'id': formations.id})}}" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
                 <a href="{{path('app_inscription_formation',{ 'idformation': formations.id,'idformateur':app.user.getId()})}}" title="Ajouter un utilisateur a cette formation" class="btn btn-light"><i class="fa-solid fa-user-plus"></i></a>
                 {% endif %}
               </div>
+
+            <hr>
+            <span style="margin: auto;">{{avancement_values[i]}}%</span>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: {{ avancement_values[i] }}%" aria-valuenow="{{ avancement_values[i] }}" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+            <hr>
+
+            <p class="text text-success">Vous avez terminer la formation !</p>
+
+            </div>
+            {% set i = i + 1 %}
             {% endfor %}
         </ul>
     {% endif %}

@@ -60,9 +60,11 @@ class SecurityController extends AbstractController
             //image upload
            // $photo=$request->files->get("user_photo");
             $photo = $form['photo']->getData();
+            if($photo){
             $photo_name=$photo->getClientOriginalName();
             $photo->move($this->getParameter("photo_directory"),$photo_name);
             $user->setPhoto($photo_name);
+            }
             //------
             $entityManager = $this->getDoctrine()->getManager();
            $inputValueRole = $user->getRole();
@@ -92,7 +94,8 @@ class SecurityController extends AbstractController
      */
     public function GestionUser(UserRepository $userrepository,DemandeformateurRepository $demandeformateurrepository,Security $security)
     {   $user=$this->getUser();
-        if($user){
+        $role=$user->getRole();
+        if($user && $role == "admin"){
         $demande=$userrepository->findBy(['role'=>'userformateur']);
         $entityManager = $this->getDoctrine()->getManager();
         $demandeformateur = new Demandeformateur();

@@ -11,9 +11,17 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+    App\Security\LoggedInVoter:
+        tags:
+            - { name: 'security.voter' }
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
+    App\Service\Avancement:
+        arguments:
+            $sectionRepository: '@App\Repository\SectionRepository'
+            $ressourceRepository: '@App\Repository\RessourceRepository'
+            $exerciceUserRepository: '@App\Repository\ExerciceUserRepository'
+            $ressourceUserRepository: '@App\Repository\RessourceUserRepository'
     App\:
         resource: '../src/'
         exclude:

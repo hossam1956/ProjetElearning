@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Ressource;
+use App\Entity\RessourceUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Ressource>
+ * @extends ServiceEntityRepository<RessourceUser>
  *
- * @method Ressource|null find($id, $lockMode = null, $lockVersion = null)
- * @method Ressource|null findOneBy(array $criteria, array $orderBy = null)
- * @method Ressource[]    findAll()
- * @method Ressource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method RessourceUser|null find($id, $lockMode = null, $lockVersion = null)
+ * @method RessourceUser|null findOneBy(array $criteria, array $orderBy = null)
+ * @method RessourceUser[]    findAll()
+ * @method RessourceUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RessourceRepository extends ServiceEntityRepository
+class RessourceUserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Ressource::class);
+        parent::__construct($registry, RessourceUser::class);
     }
 
-    public function add(Ressource $entity, bool $flush = false): void
+    public function add(RessourceUser $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class RessourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Ressource $entity, bool $flush = false): void
+    public function remove(RessourceUser $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -38,22 +38,19 @@ class RessourceRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-    /**
-     * @return Ressource[] Returns an array of Ressource objects
-     */
-    public function findRessourcesBySectionId($section_id): array
+    public function findOneByRessourceAndUser($ressourceid, $userid): ?RessourceUser
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.idsection = :val')
-            ->setParameter('val', $section_id)
-            ->orderBy('r.id', 'ASC')
-            // ->setMaxResults(10)
+            ->andWhere('r.ressourceid = :ressourceId')
+            ->andWhere('r.userid = :userId')
+            ->setParameter('ressourceId', $ressourceid)
+            ->setParameter('userId', $userid)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 
 //    /**
-//     * @return Ressource[] Returns an array of Ressource objects
+//     * @return RessourceUser[] Returns an array of RessourceUser objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -67,7 +64,7 @@ class RessourceRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Ressource
+//    public function findOneBySomeField($value): ?RessourceUser
 //    {
 //        return $this->createQueryBuilder('r')
 //            ->andWhere('r.exampleField = :val')

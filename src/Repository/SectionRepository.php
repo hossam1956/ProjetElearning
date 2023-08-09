@@ -38,6 +38,18 @@ class SectionRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    /**
+     * @return Section[] Returns an array of Section objects
+     */
+    public function findSectionByFormationId($formation_id): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.idformation = :val')
+            ->setParameter('val', $formation_id)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Section[] Returns an array of Section objects

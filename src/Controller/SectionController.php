@@ -12,6 +12,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SectionRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\FormationRepository;
+use App\Service\Avancement;
+
 class SectionController extends AbstractController
 {
     /**
@@ -19,21 +21,22 @@ class SectionController extends AbstractController
      */
     public function addsection(Request $request)
     {   $user=$this->getUser();
-        if($user){
-        $section = new Section();
-        $form = $this->createForm(SectionType::class, $section);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $section=$form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($section);
-            $entityManager->flush();
+        $role=$user->getRole();
+        if($user && $role == "formateur"){
+            $section = new Section();
+            $form = $this->createForm(SectionType::class, $section);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $section=$form->getData();
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($section);
+                $entityManager->flush();
 
-            return $this->redirectToRoute('showformation'); 
-        }
-        return $this->render('section/index.html.twig', [
-            'form' => $form->createView()
-        ]);
+                return $this->redirectToRoute('showformation'); 
+            }
+            return $this->render('section/index.html.twig', [
+                'form' => $form->createView()
+            ]);
         }
         else{
             return $this->redirectToRoute('home');
@@ -46,20 +49,21 @@ class SectionController extends AbstractController
     public function editsection(Section $section,Request $request)
     {
         $user=$this->getUser();
-        if($user){
-        $form = $this->createForm(SectionType::class, $section);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $section=$form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($section);
-            $entityManager->flush();
+        $role=$user->getRole();
+        if($user && $role == "formateur"){
+            $form = $this->createForm(SectionType::class, $section);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $section=$form->getData();
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($section);
+                $entityManager->flush();
 
-            return $this->redirectToRoute('showformation'); 
-        }
-        return $this->render('section/edit.html.twig', [
-            'form' => $form->createView()
-        ]);
+                return $this->redirectToRoute('showformation'); 
+            }
+            return $this->render('section/edit.html.twig', [
+                'form' => $form->createView()
+            ]);
         }
         else{
             return $this->redirectToRoute('home');
@@ -71,19 +75,20 @@ class SectionController extends AbstractController
      */
     public function deletesection(Section $section,Request $request,RessourceRepository $ressourcerepository)
     {       $user=$this->getUser();
-            if($user){
-            $idsection=$section->getId();
-            $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
-            $entityManager = $this->getDoctrine()->getManager();
-            while ($ressourcesection) {
-                    $entityManager->remove($ressourcesection);
-                    $entityManager->flush();
-                    $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
+             $role=$user->getRole();
+            if($user && $role == "formateur"){
+                $idsection=$section->getId();
+                $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
+                $entityManager = $this->getDoctrine()->getManager();
+                while ($ressourcesection) {
+                        $entityManager->remove($ressourcesection);
+                        $entityManager->flush();
+                        $ressourcesection=$ressourcerepository->findOneBy(['idsection'=>$idsection]);
 
-            }
-            $entityManager->remove($section);
-            $entityManager->flush();
-            return $this->redirectToRoute('showformation'); 
+                }
+                $entityManager->remove($section);
+                $entityManager->flush();
+                return $this->redirectToRoute('showformation'); 
             }
             else{
                 return $this->redirectToRoute('home'); 
@@ -93,14 +98,17 @@ class SectionController extends AbstractController
      * @Route("/show/{idformation}/section", name="showsection")
      */
 
-     public function showsection(SectionRepository $sectionrepository,$idformation)
+     public function showsection(SectionRepository $sectionrepository,$idformation,Avancement $avancement)
     {   $user=$this->getUser();
         if($user){ 
-        $section = $sectionrepository->findBy(['idformation' => $idformation]);
-        
-        return $this->render('section/showsection.html.twig', [
-            'sections' => $section
-        ]);
+            $section = $sectionrepository->findBy(['idformation' => $idformation]);
+
+            $avancement_value = $avancement->GetUserAvancement($idformation, $this->getUser()->getId());
+    
+            return $this->render('section/showsection.html.twig', [
+                'sections' => $section,
+                'avancement' => $avancement_value
+            ]);
         }
         else{
             return $this->redirectToRoute('home');

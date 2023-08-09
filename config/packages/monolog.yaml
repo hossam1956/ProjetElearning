@@ -1,6 +1,12 @@
 monolog:
-    channels:
-        - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+    channels: ['voter_debug']
+    handlers:
+        voter_debug:
+            type: stream
+            path: '%kernel.logs_dir%/voter_debug.log'
+            level: debug
+            channels: ['voter_debug']
+        
 
 when@dev:
     monolog:

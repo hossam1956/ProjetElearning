@@ -1,8 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Hello ressource!{% endblock %}
-{% block stylesheets %} {{parent()}} 
-{% endblock %}
+{% block stylesheets %} {{parent()}} {% endblock %}
 {% block javascripts %} {{parent()}} {% endblock %}
 {% block navabar %}
 {{parent()}}
@@ -11,7 +10,21 @@
 {% if app.user and app.user.getRole() == 'formateur' %} 
 <a href="{{path('addressource')}}" class="btn btn-light mt-4 ms-4 " style="width: 200px;display: inline;"><i class="fa fa-plus" > Ajouter une ressource</i></a>
 {% endif %}
-<table class="table ms-4  me-4">
+
+<br>
+<h3>Avancement total: {{ avancement }}%</h3>
+<div class="progress">
+  <div class="progress-bar" role="progressbar" style="width: {{ avancement }}%" aria-valuenow="{{ avancement }}" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<br>
+
+{% for message in app.flashes("success") %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<table class="table">
   <thead>
     <tr>
       <th scope="col">Type</th>
@@ -27,20 +40,19 @@
       <td>{{ressource.titre}}</td>
       <td>
         <a href="{{path('download_doc',{'id': ressource.id})}}" class="btn btn-light"><i class="fa-solid fa-download"></i></a>
+        <a href="{{path('doneressource',{'ressource_id': ressource.id, 'idsection': ressource.idsection})}}" class="btn btn-light"><i class="fa-solid fa-check"></i></a>
         {% if app.user and app.user.getRole() == 'formateur' %} 
         <a href="{{path('editressource',{'idsection': ressource.idsection, 'id': ressource.id})}}" class="btn btn-warning " ><i class="fa-solid fa-pen-to-square"></i></a>
         <a href="{{path('deleteressource',{'idsection': ressource.idsection, 'id': ressource.id})}}" class="btn btn-danger " ><i class="fa-solid fa-trash"></i></a>
         {% endif %}
       </td>
-      
     
     </tr>
     {% endfor %}
   </tbody>
 </table>
-<table class="table ms-4  me-4">
-<h1>Exercices
-</h1>
+<table>
+<h1>Exercices</h1>
   <tbody>
     {% for exercice in exercices %}
     <tr>
