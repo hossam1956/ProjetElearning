@@ -41,7 +41,7 @@ class RessourceController extends AbstractController
     /**
      * @Route("/add/ressource", name="addressource")
      */
-    public function addressource(Request $request)
+    public function addressource(Request $request, FlashBagInterface $flashMessage)
 
     {
         $ressource = new Ressource();
@@ -51,17 +51,25 @@ class RessourceController extends AbstractController
             $ressource = $form->getData();
             //image upload
             $lien = $form['lien']->getData();
-            $lien_name = $lien->getClientOriginalName();
-            $lien->move($this->getParameter("photo_directory"), $lien_name);
-            $ressource->setLien($lien_name);
+            if ($lien) {
+                $lien_name = $lien->getClientOriginalName();
+                $lien->move($this->getParameter("photo_directory"), $lien_name);
+                $ressource->setLien($lien_name);
+            }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($ressource);
             $entityManager->flush();
 
+            $flashMessage->add("success", "La ressource est bien ajoutée !");
+
             // You can add a flash message here to notify the user about successful registration.
             // $this->addFlash('success', 'Registration successful!');
 
-            return $this->redirectToRoute('showformation');
+            // return $this->redirectToRoute('showformation');
+            return $this->redirectToRoute(
+                'showressource',
+                ['idsection' => $ressource->getIdsection()]
+            );
         }
         return $this->render('ressource/index.html.twig', [
             'form' => $form->createView()
@@ -74,7 +82,7 @@ class RessourceController extends AbstractController
     /**
      * @Route("/edit/{idsection}/ressource/{id}", name="editressource")
      */
-    public function editressource(Ressource $ressource, Request $request)
+    public function editressource(Ressource $ressource, Request $request, FlashBagInterface $flashMessage, $idsection)
     {
         $ressource->setLien(null);
         $form = $this->createForm(RessourceType::class, $ressource);
@@ -85,7 +93,13 @@ class RessourceController extends AbstractController
             $entityManager->persist($ressource);
             $entityManager->flush();
 
-            return $this->redirectToRoute('showformation');
+            $flashMessage->add("success", "La ressource est bien modifiée !");
+            return $this->redirectToRoute(
+                'showressource',
+                ['idsection' => $idsection]
+            );
+
+            // return $this->redirectToRoute('showformation');
         }
         return $this->render('ressource/edit.html.twig', [
             'form' => $form->createView()
@@ -97,13 +111,19 @@ class RessourceController extends AbstractController
     /**
      * @Route("/delete/{idsection}/ressource/{id}", name="deleteressource")
      */
-    public function deleteressource(Ressource $ressource, Request $request, RessourceRepository $ressourcerepository, $id, $idsection)
+    public function deleteressource(Ressource $ressource, Request $request, RessourceRepository $ressourcerepository, $id, $idsection, FlashBagInterface $flashMessage)
     {
         $ressource = $ressourcerepository->findOneBy(['id' => $id]);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($ressource);
         $entityManager->flush();
-        return $this->redirectToRoute('showformation');
+
+        $flashMessage->add("success", "La ressource est bien supprimée !");
+
+        return $this->redirectToRoute(
+            'showressource',
+            ['idsection' => $idsection]
+        );
     }
 
 
@@ -133,10 +153,23 @@ class RessourceController extends AbstractController
     {
 
         $ressource = $ressourceRepository->find($id);
+
+        if (!$ressource) {
+            throw $this->createNotFoundException('Ressource non trouvéed');
+        }
+
         $ressourceTitre = $ressource->getTitre();
         $ressourceType = $ressource->getType();
         $ressourceLien = $ressource->getLien();
-        $filePath = $this->getParameter("photo_directory") . "/$ressourceLien";
+        // $filePath = $this->getParameter("photo_directory") . "/$ressourceLien";
+        $filePath = $this->getParameter("photo_directory") . "\\$ressourceLien"; // Adjust the path accordingly
+
+        echo $filePath;
+
+        // if (!file_exists($filePath)) {
+        //     throw $this->createNotFoundException('Fichier non trouvé');
+        // }
+
         $response = new Response(file_get_contents($filePath));
         $response->headers->set('Content-Type', $ressourceType);
         $response->headers->set('Content-Disposition', "attachment; filename=$ressourceTitre");

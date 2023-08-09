@@ -12,14 +12,16 @@ use App\Repository\FormationRepository;
 use App\Repository\RessourceRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\FormationFormType;
+use App\Repository\ExerciceRepository;
 use App\Service\Avancement;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class FormationController extends AbstractController
 {
     /**
      * @Route("/formation/add", name="addformation")
      */
-    public function addformation(Request $request)
+    public function addformation(Request $request, FlashBagInterface $flashMessage)
     {
         $formation = new Formation;
         $form = $this->createForm(FormationFormType::class, $formation);
@@ -28,13 +30,17 @@ class FormationController extends AbstractController
             $formation = $form->getData();
             //image upload
             $image = $form['image']->getData();
-            $image_name = $image->getClientOriginalName();
-            $image->move($this->getParameter("photo_directory"), $image_name);
-            $formation->setImage($image_name);
+            if ($image) {
+                $image_name = $image->getClientOriginalName();
+                $image->move($this->getParameter("photo_directory"), $image_name);
+                $formation->setImage($image_name);
+            }
             //..........
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($formation);
             $entityManager->flush();
+
+            $flashMessage->add("success", "La formation est bien ajoutée !");
 
             return $this->redirectToRoute('showformation');
         }
@@ -69,25 +75,40 @@ class FormationController extends AbstractController
     /**
      * @Route("/delete/formation/{id}", name="deleteformation")
      */
-    public function deleteformation(Formation $formation, Request $request, SectionRepository $sectionrepository, RessourceRepository $ressourcerepository)
+    public function deleteformation($id, Request $request, SectionRepository $sectionrepository, RessourceRepository $ressourcerepository, FormationRepository $formationRepository, FlashBagInterface $flashMessage)
     {
-        $idformation = $formation->getId();
-        $sectionformation = $sectionrepository->findOneBy(['idformation' => $idformation]);
         $entityManager = $this->getDoctrine()->getManager();
-        while ($sectionformation) {
-            $idsection = $sectionformation->getId();
-            $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
-            while ($ressourcesection) {
-                $entityManager->remove($ressourcesection);
-                $entityManager->flush();
-                $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
+        $formation = $formationRepository->find($id);
+        $sections = $sectionrepository->findSectionByFormationId($id);
+
+        foreach ($sections as $section) {
+            $ressources = $ressourcerepository->findRessourcesBySectionId($section->getId());
+
+            foreach ($ressources as $ressource) {
+                $entityManager->remove($ressource);
             }
-            $entityManager->remove($sectionformation);
-            $entityManager->flush();
-            $sectionformation = $sectionrepository->findOneBy(['idformation' => $idformation]);
+
+            $exercices = $section->getExercices();
+            foreach ($exercices as $exercice) {
+                $questions = $exercice->getQuestions();
+                foreach ($questions as $question) {
+                    $choix = $question->getChoixReponses();
+                    foreach ($choix as $choice) {
+                        $entityManager->remove($choice);
+                    }
+                    $entityManager->remove($question);
+                }
+
+                $entityManager->remove($exercice);
+            }
+
+            $entityManager->remove($section);
         }
+
         $entityManager->remove($formation);
         $entityManager->flush();
+        $flashMessage->add("success", "La formation est bien supprimée !");
+
         return $this->redirectToRoute('showformation');
     }
 
@@ -113,15 +134,21 @@ class FormationController extends AbstractController
     /**
      * @Route("/search", name="search_form")
      */
-    public function searchForm(Request $request)
+    public function searchForm(Request $request, Avancement $avancement)
     {
         $query = $request->query->get('query');
 
         $formations = $this->getDoctrine()->getRepository(Formation::class)->findByTitre($query);
 
+        $avancement_values = [];
+        foreach ($formations as $formation) {
+            array_push($avancement_values, $avancement->GetUserAvancement($formation->getId(), $this->getUser()->getId()));
+        }
+
         return $this->render('formation/showformation.html.twig', [
             'formation' => $formations,
             'query' => $query,
+            'avancement_values' => $avancement_values
         ]);
     }
 }

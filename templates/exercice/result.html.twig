@@ -25,7 +25,7 @@
 
 {% block body %}
     <div class="container">
-    <h1>Votre score est : {{ score }} %</h1>
+    <h1>Votre score est : {{ score | round }} %</h1>
     
     {% if score >= 50 %}
         <div class="alert alert-success">Vous avez réussit l'exercice et votre avancement est bien enregistré !</div>
@@ -37,6 +37,11 @@
             </a>
         </div>
     {% endif %}
+
+    <a href="{{path('showsection',{'sections': exercice.section, 'avancement': avancement, 'idformation': formation_id.id })}}" class="btn btn-primary action">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Revenir à la formation
+    </a>
 
     {% set i = 1 %}
     {% for question in exercice.questions %}

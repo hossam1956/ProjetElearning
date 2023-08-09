@@ -14,6 +14,7 @@ use App\Repository\SectionRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\FormationRepository;
 use App\Service\Avancement;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class SectionController extends AbstractController
 {
@@ -62,18 +63,46 @@ class SectionController extends AbstractController
     /**
      * @Route("/delete/section/{id}", name="deletesection")
      */
-    public function deletesection(Section $section, Request $request, RessourceRepository $ressourcerepository)
+    public function deletesection(Section $section, Request $request, RessourceRepository $ressourcerepository, FlashBagInterface $flashMessage)
     {
-        $idsection = $section->getId();
-        $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
+        // $idsection = $section->getId();
+        // $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
+        // $entityManager = $this->getDoctrine()->getManager();
+        // while ($ressourcesection) {
+        //     $entityManager->remove($ressourcesection);
+        //     $entityManager->flush();
+        //     $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
+        // }
+        // $entityManager->remove($section);
+        // $entityManager->flush();
+        // return $this->redirectToRoute('showformation');
+
         $entityManager = $this->getDoctrine()->getManager();
-        while ($ressourcesection) {
-            $entityManager->remove($ressourcesection);
-            $entityManager->flush();
-            $ressourcesection = $ressourcerepository->findOneBy(['idsection' => $idsection]);
+        $ressources = $ressourcerepository->findRessourcesBySectionId($section->getId());
+
+        foreach ($ressources as $ressource) {
+            $entityManager->remove($ressource);
         }
+
+        $exercices = $section->getExercices();
+        foreach ($exercices as $exercice) {
+            $questions = $exercice->getQuestions();
+            foreach ($questions as $question) {
+                $choix = $question->getChoixReponses();
+                foreach ($choix as $choice) {
+                    $entityManager->remove($choice);
+                }
+                $entityManager->remove($question);
+            }
+
+            $entityManager->remove($exercice);
+        }
+
         $entityManager->remove($section);
+
         $entityManager->flush();
+        $flashMessage->add("success", "La section est bien supprimée !");
+
         return $this->redirectToRoute('showformation');
     }
 

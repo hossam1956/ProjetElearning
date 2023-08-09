@@ -5,6 +5,11 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <style>
+        .action, .action:hover {
+            color: #fff;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -59,26 +64,26 @@
                         <ul>
                             <div class="actions">
                                 <td>
-                                    <a href="{{ path('app_exercice.edit', {id : exercice.id}) }}" class="btn btn-warning">
+                                    <a href="{{ path('app_exercice.edit', {id : exercice.id}) }}" class="btn btn-warning action">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Modifier titre
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="{{ path('app_question', {exercice_id : exercice.id}) }}" class="btn btn-primary">
+                                    <a href="{{ path('app_question', {exercice_id : exercice.id}) }}" class="btn btn-primary action">
                                         <i class="fa-regular fa-eye"></i>
                                         Afficher questions
                                     </a>
                                 </td>
                                 <td>
                                     <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <button type="button" class="btn btn-danger action" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         <i class="fa-solid fa-trash"></i>
                                         Supprimer exercice
                                     </button>
                                 </td>
                                 <td>
-                                    <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info">
+                                    <a href="{{ path('app_exercice.practice', {exercice_id : exercice.id}) }}" class="btn btn-info action">
                                         <i class="fa-solid fa-book"></i>
                                         Mettre en pratique
                                     </a>

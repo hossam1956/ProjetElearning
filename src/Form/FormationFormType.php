@@ -26,11 +26,11 @@ class FormationFormType extends AbstractType
             ])
             ->add('categorie', ChoiceType::class, [
                 'choices' => [
-                    'dev web' => 'dev_web',
-                    'programmation' => 'progmmation',
+                    'Développement Web' => 'dev_web',
+                    'Programmation' => 'progmmation',
                     'IA' => 'IA',
-                    'securite' => 'securite',
-                    'base de donnees' => 'bd',
+                    'Sécurité' => 'securite',
+                    'Base de données' => 'bd',
                 ],
                 'label' => 'Categorie'
             ])

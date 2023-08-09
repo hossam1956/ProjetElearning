@@ -1,12 +1,20 @@
-{% extends 'base.html.twig' %}
+{% extends "base.html.twig" %}
 
-{% block title %}Hello formation!{% endblock %}
-{% block stylesheets %} {{parent()}} {% endblock %}
-{% block javascripts %} {{parent()}} {% endblock %}
-{% block navabar %}
-{{parent()}}
-{% endblock %}
+{% block title %}Ajouter formation{% endblock %}
+
 {% block body %}
-{{ form(form) }}
-
+<br>
+    <div class="container">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Ajouter formation</h3>
+                </div>
+                <div class="card-body">
+                    {{ form(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+<br>
 {% endblock %}
